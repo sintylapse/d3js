@@ -1,0 +1,26 @@
+[
+	{
+		"name": "Malak",
+		"age": 21
+	},
+	{
+		"name":"Strukov",
+		"age": 21
+	},
+	{
+		"name": "Amorality",
+		"age": 18
+	},
+	{
+		"name": "Mister Max",
+		"age": 5
+	},
+	{
+		"name": "Primerov",
+		"age": 22
+	},
+	{
+		"name": "Vlaga",
+		"age": "23"
+	}
+]
