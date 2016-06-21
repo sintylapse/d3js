@@ -17,7 +17,7 @@ class Comp1 extends React.Component{
 
 	render(){
 
-		
+
 
 		return(
 			<div>
@@ -29,12 +29,11 @@ class Comp1 extends React.Component{
 }
 
 export default class App extends React.Component{
-	
+
 	render(){
 
 		return(
 			<div>
-				<h1>HELLLO WRLDDD!!</h1>
 				<Comp1 />
 			</div>
 		)

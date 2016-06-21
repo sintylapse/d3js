@@ -4,7 +4,7 @@
   "description": "",
   "main": "webpack.config.js",
   "scripts": {
-    "dev-server": "webpack-dev-server --progress --watch --colors --hot --inline --content-base public --port 8090 --host 0.0.0.0"
+    "dev-server": "node_modules/.bin/webpack-dev-server --progress --watch --colors --hot --inline --content-base public --port 8090 --host 0.0.0.0"
   },
   "author": "",
   "license": "ISC",

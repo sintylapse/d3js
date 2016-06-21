@@ -6,17 +6,6 @@ import $ from 'jquery'
 	.append('g')
 	.attr('class', 'generated-paragraphs')
 
-	console.log(mainGroup);
-
-	mainGroup.selectAll()
-	.data([1, 2, 3])
-	.enter()
-	.append('p').text('this paragraph was generated')
-	.attr({
-		class: data => `paragraph-${data}`,
-		style: data => `color: #${Math.floor(Math.random() * 1000)}; text-transform: uppercase; font-weight: bold`,
-	})
-
 	// RANDOM GRAPHIC
 
 	let randomlyChart = [];
@@ -32,16 +21,15 @@ import $ from 'jquery'
 	let rangeLast = randomlyChart[randomlyChart.length - 1].date
 
 
-		
+
 	let mainWidth = 1000,
-			mainHeight = 250
+		mainHeight = 250
 
 	let chartValue = d3.svg.area()
 		.interpolate('monotone')
 		.x(data => mainScaleX(data.date))
 		.y0(mainHeight)
 		.y1(data => mainScaleY(data.value))
-
 
 
 
@@ -54,14 +42,16 @@ import $ from 'jquery'
 	let mainScaleY = d3.scale.linear().domain([0, dispersion]).range([200, 0])
 	let fillScale = d3.scale.category20()
 
+	let xAxis = d3.svg.axis().scale(mainScaleX).tickSize(mainHeight)
+
 	let canvas = d3.select('.d3Render').append('svg')
 	.attr({
 		width: mainWidth,
 		height: mainHeight
 	})
-	
+
 	const buttons = d3.select('.d3Render').append('div').attr({class: 'buttons'})
-	
+
 	buttons.append('button')
 	.attr({
 		class: 'incrementStrokeWidth'
@@ -94,11 +84,19 @@ import $ from 'jquery'
 			fill: 'mediumslateblue'
 		})
 
+	canvas.append("g")
+		.attr("class", "x axis")
+		.attr("transform", "translate(0, -20)")
+		.call(xAxis)
+		.attr({
+			fill: 'none'
+		})
+
 	console.log(stroke[0]);
 	console.log('stroke ^^');
 
 	let strokeWidth = 1;
-	
+
 	function incrementStrokeWidth(){
 		window.rangeMin -= 100
 		window.rangeMax += 100
@@ -169,14 +167,14 @@ import $ from 'jquery'
 //   .x(function(d) { return x(d.date); })
 //   .y0(height)
 //   .y1(function(d) { return y(d.close); });
-    
+
 // // Adds the svg canvas
 // var svg = d3.select(".d3RenderExample")
 //     .append("svg")
 //         .attr("width", width + margin.left + margin.right)
 //         .attr("height", height + margin.top + margin.bottom)
 //     .append("g")
-//         .attr("transform", 
+//         .attr("transform",
 //               "translate(" + margin.left + "," + margin.top + ")");
 
 // // Get the data
@@ -285,7 +283,7 @@ import $ from 'jquery'
 // 		height: 10,
 // 		y: (data, i) => i * 100,
 // 		fill: 'blue'
-// 	})	
+// 	})
 
 // 	rectGroup.attr({
 // 		transform: 'rotate(-90), translate(-200, 0)',
