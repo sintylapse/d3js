@@ -84,7 +84,7 @@ import $ from 'jquery'
 			fill: 'mediumslateblue'
 		})
 
-	canvas.append("g")
+	let isAxis = canvas.append("g")
 		.attr("class", "x axis")
 		.attr("transform", "translate(0, -20)")
 		.call(xAxis)
@@ -109,10 +109,14 @@ import $ from 'jquery'
 
 		let mainScaleXSecond = d3.scale.linear().domain([0, rangeLast]).range([window.rangeMin, window.rangeMax])
 
+
 		stroke.transition().attr({
 			d: chartValueSecond(randomlyChart),
 			fill: fillScale(strokeWidth)
 		})
+
+		let xAxisSecond = d3.svg.axis().scale(mainScaleXSecond).tickSize(mainHeight)
+		isAxis.transition().call(xAxisSecond)
 	}
 
 	function decrementStrokeWidth(){
@@ -131,6 +135,9 @@ import $ from 'jquery'
 			d: chartValueSecond(randomlyChart),
 			fill: fillScale(strokeWidth)
 		})
+
+		let xAxisSecond = d3.svg.axis().scale(mainScaleXSecond).tickSize(mainHeight)
+		isAxis.transition().call(xAxisSecond)
 	}
 
 // GLOBAL END
