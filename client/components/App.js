@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom'
 
 
 
-
 class Comp1 extends React.Component{
 
 
@@ -13,16 +12,18 @@ class Comp1 extends React.Component{
     	textColor: "red"
     };
 
-  }
+	}
 
 	render(){
-
-
 
 		return(
 			<div>
 				<div className="d3Render"></div>
 				<div className="d3RenderExample"></div>
+				<button className="_zoomChart" data-zoom="decrement">-</button>
+				<button className="_zoomChart" data-zoom="increment">+</button>
+				<button className="_mooveChart" data-moove="left">{'<'}</button>
+				<button className="_mooveChart" data-moove="right">{'>'}</button>
 			</div>
 		)
 	}

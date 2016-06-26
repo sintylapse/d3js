@@ -16,17 +16,18 @@ module.exports = {
         test: /\.json$/,
         loader: "json-loader"
       },
-      { 
-        test: /\.js$/, 
+      {
+        test: /\.js$/,
         exclude: [/node_modules/, /public/],
         loader: "babel-loader",
         query: {
           presets: ['es2015', 'react']
+          // hrme works incorrect with d3
           // presets: ['es2015', 'react', 'react-hmre']
         }
       },
-      { 
-        test: /\.styl$/, 
+      {
+        test: /\.styl$/,
         loader: "style-loader!css-loader?minimize!stylus",
         exclude: [/node_modules/, /public/]
       }
