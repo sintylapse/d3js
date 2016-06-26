@@ -8,8 +8,8 @@ import data from './data.js'
 		mainHeight = 250
 
 	let chartOptions = {
-		rangeMin: 0,
-		rangeMax: 950,
+		rangeMin: -600,
+		rangeMax: 1550,
 		xPosition: 0
 	}
 
@@ -21,9 +21,15 @@ import data from './data.js'
 			.domain([d3.min(data, (d) => d.value), d3.max(data, (d) => d.value)])
 			.range([250, 0])
 
-	let canvas = d3.select('.d3Render').append('svg')
+	let svg = d3.select('.d3Render').append('svg')
 	.attr({
 		width: mainWidth,
+		height: mainHeight
+	})
+
+	svg.append('clipPath').attr('id', 'clip')
+	.append('rect').attr({
+		width: mainWidth - 50,
 		height: mainHeight
 	})
 
@@ -36,17 +42,18 @@ import data from './data.js'
 	let xAxisSize = d3.svg.axis().scale(mainScaleX).tickSize(mainHeight)
 	let yAxisSize = d3.svg.axis().scale(mainScaleY).ticks(10).orient("right")
 
-	let stroke = canvas.append('path')
+	let stroke = svg.append('path')
 		.attr({
 			d: chartValue(data),
 			stroke: '#ff3131',
 			transform: `translate(${chartOptions.xPosition}, 0)`,
 			'stroke-width': 1,
 			fill: 'mediumslateblue',
-			class: 'area'
+			class: 'area',
+			// 'clip-path': 'url(#clip)'
 		})
 
-	let xAxis = canvas.append("g")
+	let xAxis = svg.append("g")
 		.attr({
 			class: 'xAxis',
 			transform: `translate(${chartOptions.xPosition}, -20)`,
@@ -54,10 +61,10 @@ import data from './data.js'
 		})
 		.call(xAxisSize)
 
-		let yAxis = canvas.append("g")
+		let yAxis = svg.append("g")
 			.attr({
 				class: 'yAxis',
-				transform: `translate(${mainWidth - 100}, 0)`,
+				transform: `translate(${mainWidth - 50}, 0)`,
 				fill: 'none'
 			})
 			.call(yAxisSize)
@@ -84,7 +91,7 @@ import data from './data.js'
 	d3.selectAll('._mooveChart').on('click', function(){
 		let dataMoove = d3.select(this).attr('data-moove')
 
-		dataMoove === 'right' ? chartOptions.xPosition -= 20 : dataMoove === 'left' ? chartOptions.xPosition += 20 : null
+		dataMoove === 'right' ? chartOptions.xPosition -= 50 : dataMoove === 'left' ? chartOptions.xPosition += 50 : null
 		stroke.transition().attr("transform", `translate(${chartOptions.xPosition}, 0)`)
 		xAxis.transition().attr("transform", `translate(${chartOptions.xPosition}, -20)`)
 	})
