@@ -108,6 +108,7 @@ import data from './data.js'
 		// })
 		// xAxis.transition().call(xAxisSize)
 
+
 		strokeGroup.transition().attr('transform', `translate(${chartOptions.xPosition}, 0) scale(${chartOptions.chartScale})`)
 		dotGroup.transition().attr('transform', `translate(${chartOptions.xPosition}, 0) scale(${chartOptions.chartScale})`)
 	})
