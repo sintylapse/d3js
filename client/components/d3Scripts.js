@@ -10,7 +10,8 @@ import data from './data.js'
 	let chartOptions = {
 		rangeMin: -600,
 		rangeMax: 1550,
-		xPosition: 0
+		xPosition: 0,
+		chartScale: 1
 	}
 
 	// domain - реальные размеры от 0 до max
@@ -33,24 +34,38 @@ import data from './data.js'
 		height: mainHeight
 	})
 
-	let chartValue = d3.svg.area()
+	let chartValue = d3.svg.line()
 	.interpolate('monotone')
 	.x(data => mainScaleX(data.date))
-	.y0(mainHeight)
-	.y1(data => mainScaleY(data.value))
+	.y(data => mainScaleY(data.value))
 
 	let xAxisSize = d3.svg.axis().scale(mainScaleX).tickSize(mainHeight)
 	let yAxisSize = d3.svg.axis().scale(mainScaleY).ticks(10).orient("right")
 
-	let stroke = svg.append('path')
+	let strokeGroup = svg.append('g').attr('class', 'main-path')
+	let stroke = strokeGroup.append('path')
 		.attr({
 			d: chartValue(data),
-			stroke: '#ff3131',
+			stroke: 'mediumslateblue',
 			transform: `translate(${chartOptions.xPosition}, 0)`,
 			'stroke-width': 1,
-			fill: 'mediumslateblue',
+			fill: 'none',
 			class: 'area',
 			// 'clip-path': 'url(#clip)'
+		}).on('click', function(e){
+			console.log('sdfsdfs', e);
+		})
+
+	let dotGroup = svg.append('g').attr('class', 'circles')
+	let dot = dotGroup.selectAll("circle")
+		.data(data)
+		.enter().append('circle')
+		.attr({
+			class: 'dot',
+			cx: data => mainScaleX(data.date),
+			cy: data => mainScaleY(data.value),
+			transform: `translate(${chartOptions.xPosition}, 0)`,
+			r: 2
 		})
 
 	let xAxis = svg.append("g")
@@ -61,12 +76,12 @@ import data from './data.js'
 		})
 		.call(xAxisSize)
 
-		let yAxis = svg.append("g")
-			.attr({
-				class: 'yAxis',
-				transform: `translate(${mainWidth - 50}, 0)`,
-				fill: 'none'
-			})
+	let yAxis = svg.append("g")
+		.attr({
+			class: 'yAxis',
+			transform: `translate(${mainWidth - 50}, 0)`,
+			fill: 'none'
+		})
 			.call(yAxisSize)
 
 	// HANDLERS
@@ -74,26 +89,36 @@ import data from './data.js'
 	d3.selectAll('._zoomChart').on('click', function(){
 		let dataZoom = d3.select(this).attr('data-zoom')
 
-		if(dataZoom === 'increment'){
-			chartOptions.rangeMin -= 100
-			chartOptions.rangeMax += 100
-		} else if (dataZoom === 'decrement'){
-			chartOptions.rangeMin += 100
-			chartOptions.rangeMax -= 100
-		}
+		// if(dataZoom === 'increment'){
+		// 	chartOptions.rangeMin -= 100
+		// 	chartOptions.rangeMax += 100
+		// } else if (dataZoom === 'decrement'){
+		// 	chartOptions.rangeMin += 100
+		// 	chartOptions.rangeMax -= 100
+		// }
+
+		dataZoom === 'increment' ? chartOptions.chartScale += .25 : chartOptions.chartScale -= .25
 
 		mainScaleX.range([chartOptions.rangeMin, chartOptions.rangeMax])
 
-		stroke.transition().attr('d', chartValue(data))
-		xAxis.transition().call(xAxisSize)
+		// stroke.transition().attr('d', chartValue(data))
+		// dot.transition().attr({
+		// 	cx: data => mainScaleX(data.date),
+		// 	cy: data => mainScaleY(data.value)
+		// })
+		// xAxis.transition().call(xAxisSize)
+
+		strokeGroup.transition().attr('transform', `translate(${chartOptions.xPosition}, 0) scale(${chartOptions.chartScale})`)
+		dotGroup.transition().attr('transform', `translate(${chartOptions.xPosition}, 0) scale(${chartOptions.chartScale})`)
 	})
 
 	d3.selectAll('._mooveChart').on('click', function(){
 		let dataMoove = d3.select(this).attr('data-moove')
 
 		dataMoove === 'right' ? chartOptions.xPosition -= 50 : dataMoove === 'left' ? chartOptions.xPosition += 50 : null
-		stroke.transition().attr("transform", `translate(${chartOptions.xPosition}, 0)`)
-		xAxis.transition().attr("transform", `translate(${chartOptions.xPosition}, -20)`)
+		strokeGroup.transition().attr('transform', `translate(${chartOptions.xPosition}, 0) scale(${chartOptions.chartScale})`)
+		dotGroup.transition().attr('transform', `translate(${chartOptions.xPosition}, 0) scale(${chartOptions.chartScale})`)
+		xAxis.transition().attr("transform", `translate(${chartOptions.xPosition * chartOptions.chartScale}, -20)`)
 	})
 
 

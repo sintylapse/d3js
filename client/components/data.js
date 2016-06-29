@@ -8,7 +8,6 @@ for(let i = 0; i <= 1000; i++){
     value: value
   }
   data[i] = newObj;
-  console.log(newObj)
   Math.random() > 0.5 ? value += increment : value -= increment
 }
 
