@@ -1,3 +1,4 @@
+$color-1= mediumslateblue
 .d3Render
 	position relative
 .tooltip
@@ -5,10 +6,17 @@
 	width 200px
 	padding 5px
 	border 1px solid black
-	color mediumslateblue
+	color $color-1
 	background white
 	opacity: 0
 	display none
 
+.editForm
+	display none
+	position absolute
+	.confirm
+		color $color-1
+	.reject
+		color red
 .tick
 	fill black

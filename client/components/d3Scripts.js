@@ -11,7 +11,9 @@ import data from './data.js'
 		rangeMin: -600,
 		rangeMax: 1550,
 		xPosition: 0,
-		chartScale: 1
+		chartScale: 1,
+		selectedX: 0,
+		selectedY: 0
 	}
 
 	// domain - реальные размеры от 0 до max
@@ -21,14 +23,26 @@ import data from './data.js'
 	let mainScaleY = d3.scale.linear()
 			.domain([d3.min(data, (d) => d.value), d3.max(data, (d) => d.value)])
 			.range([250, 0])
+	let bisectDate = d3.bisector(data => data.date).right
 
 	let tooltip = d3.select('.d3Render').append('div')
 	.attr('class', 'tooltip')
+
+	let editForm = d3.select('.d3Render').append('div')
+	.attr('class', 'editForm')
+	.html('Выбранное значение:<span class="selectedPosition"></span></br>Начать?</br><div><button class="confirm">Да</button><button class="reject">Нет</button></div>')
 
 	let svg = d3.select('.d3Render').append('svg')
 	.attr({
 		width: mainWidth,
 		height: mainHeight
+	})
+
+	let focusGroup = svg.append('g').attr('class', 'focusGroup')
+	let focus = focusGroup.append('circle').attr({
+		r: 3,
+		stroke: 'red',
+		fill: 'none'
 	})
 
 	let chartValue = d3.svg.line()
@@ -45,6 +59,7 @@ import data from './data.js'
 	let xAxisSize = d3.svg.axis().scale(mainScaleX).tickSize(mainHeight)
 	let yAxisSize = d3.svg.axis().scale(mainScaleY).ticks(10).orient("right")
 
+	// CHART CALLBACKS IS OVER HERE
 	let strokeGroup = svg.append('g').attr({
 		'class': 'main-path',
 		'pointer-events': 'all'
@@ -56,7 +71,7 @@ import data from './data.js'
 			display: 'block',
 			opacity: 1
 		})
-		.text(mainScaleX.invert(d3.mouse(this)[0]))
+		.text(mainScaleX.invert(d3.mouse(this)[0]).toFixed(2))
 	})
 	.on('mouseout', function(){
 		tooltip.transition().delay(500).style({
@@ -65,8 +80,21 @@ import data from './data.js'
 		.each('end', function(){
 			tooltip.style('display', 'none').text('')
 		})
-
 	})
+	.on('click', function(){
+		let pointer = mainScaleX.invert(d3.mouse(this)[0])
+		chartOptions.selectedX = data[bisectDate(data, pointer)].date
+		chartOptions.selectedY = data[bisectDate(data, pointer)].value
+
+		editForm.style({
+			display: 'block'
+		}).select('.selectedPosition').text(chartOptions.selectedX)
+
+		focus.attr({
+			transform: `translate(${mainScaleX(chartOptions.selectedX)}, ${mainScaleY(chartOptions.selectedY)})`
+		})
+	})
+	//										END
 
 	let stroke = strokeGroup.append('path')
 		.attr({
@@ -122,6 +150,9 @@ import data from './data.js'
 
 		stroke.transition().attr('d', chartValue(data))
 		xAxis.transition().call(xAxisSize)
+		focus.transition().attr({
+			transform: `translate(${mainScaleX(chartOptions.selectedX)}, ${mainScaleY(chartOptions.selectedY)})`
+		})
 
 	})
 
@@ -131,6 +162,7 @@ import data from './data.js'
 		dataMoove === 'right' ? chartOptions.xPosition -= 50 : dataMoove === 'left' ? chartOptions.xPosition += 50 : null
 		strokeGroup.transition().attr('transform', `translate(${chartOptions.xPosition}, 0)`)
 		xAxis.transition().attr("transform", `translate(${chartOptions.xPosition}, -20)`)
+		focusGroup.transition().attr('transform', `translate(${chartOptions.xPosition}, 0)`)
 	})
 
 
