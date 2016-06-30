@@ -1,5 +1,9 @@
 var debug = process.env.NODE_ENV !== "production";
+// var debug = false;
+
 var webpack = require('webpack');
+
+console.log('PORJECT BOUNDING BEGINS___');
 
 module.exports = {
   context: __dirname,
