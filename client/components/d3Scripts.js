@@ -22,7 +22,8 @@ import data from './data.js'
 			.domain([d3.min(data, (d) => d.value), d3.max(data, (d) => d.value)])
 			.range([250, 0])
 
-	const tooltip = d3.select('.d3Render')
+	let tooltip = d3.select('.d3Render').append('div')
+	.attr('class', 'tooltip')
 
 	let svg = d3.select('.d3Render').append('svg')
 	.attr({
@@ -44,12 +45,27 @@ import data from './data.js'
 	let xAxisSize = d3.svg.axis().scale(mainScaleX).tickSize(mainHeight)
 	let yAxisSize = d3.svg.axis().scale(mainScaleY).ticks(10).orient("right")
 
-	let strokeGroup = svg.append('g').attr('class', 'main-path')
-	.on('mousemove', function(e){
-		console.log('-----')
-		console.log(d3.event.pageX)
-		console.log(d3.event.pageY)
-		console.log(mainScaleX.invert(d3.mouse(this)[0]))
+	let strokeGroup = svg.append('g').attr({
+		'class': 'main-path',
+		'pointer-events': 'all'
+	})
+	.on('mousemove', function(){
+		tooltip.transition().style({
+			left: (d3.event.pageX) + "px",
+			top: (d3.event.pageY - 28) + "px",
+			display: 'block',
+			opacity: 1
+		})
+		.text(mainScaleX.invert(d3.mouse(this)[0]))
+	})
+	.on('mouseout', function(){
+		tooltip.transition().delay(500).style({
+			opacity: 0,
+		})
+		.each('end', function(){
+			tooltip.style('display', 'none').text('')
+		})
+
 	})
 
 	let stroke = strokeGroup.append('path')
@@ -59,8 +75,7 @@ import data from './data.js'
 			transform: `translate(${chartOptions.xPosition}, 0)`,
 			'stroke-width': 1,
 			fill: 'none',
-			class: 'area',
-			'pointer-events': 'all'
+			class: 'area'
 		})
 
 	let xAxis = svg.append("g")
