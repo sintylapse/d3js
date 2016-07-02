@@ -2,7 +2,6 @@ import d3 from 'd3'
 import $ from 'jquery'
 import data from './data.js'
 
-(function(){
 
 	const mainWidth = 1000,
 		mainHeight = 250
@@ -165,7 +164,4 @@ import data from './data.js'
 		focusGroup.transition().attr('transform', `translate(${chartOptions.xPosition}, 0)`)
 	})
 
-
-
-// GLOBAL END
-}())
+	
