@@ -5,6 +5,21 @@ import $ from 'jquery'
 import data from './data.js'
 
 
+class EditForm extends React.Component{
+
+	render(){
+		return(
+			<div className='editForm'>
+				Выбранное значение:<span class="selectedPosition">{this.props.selectedValue}</span>
+				<br/>Начать?<br/>
+				<div>
+					<button className="confirm">Вверх</button>
+					<button className="reject">Вниз</button>
+				</div>
+			</div>
+		)
+	}
+}
 
 class Comp1 extends React.Component{
 
@@ -22,6 +37,8 @@ class Comp1 extends React.Component{
 		const mainWidth = 1000,
 			mainHeight = 250,
 			passComponent = this // PASSING THE COMPONENT
+
+		let bisectsAhead = []
 
 		let chartOptions = {
 			rangeMin: -600,
@@ -44,10 +61,6 @@ class Comp1 extends React.Component{
 		let tooltip = d3.select('.d3Render').append('div')
 		.attr('class', 'tooltip')
 
-		let editForm = d3.select('.d3Render').append('div')
-		.attr('class', 'editForm')
-		.html('Выбранное значение:<span class="selectedPosition"></span></br>Начать?</br><div><button class="confirm">Да</button><button class="reject">Нет</button></div>')
-
 		let svg = d3.select('.d3Render').append('svg')
 		.attr({
 			width: mainWidth,
@@ -60,6 +73,7 @@ class Comp1 extends React.Component{
 			stroke: 'red',
 			fill: 'none'
 		})
+		let strokeAhead = focusGroup.append('path')
 
 		let chartValue = d3.svg.line()
 		.interpolate('monotone')
@@ -99,12 +113,22 @@ class Comp1 extends React.Component{
 		})
 		.on('click', function(){
 			let pointer = mainScaleX.invert(d3.mouse(this)[0])
+
 			chartOptions.selectedX = data[bisectDate(data, pointer)].date
 			chartOptions.selectedY = data[bisectDate(data, pointer)].value
 
-			editForm.style({
-				display: 'block'
-			}).select('.selectedPosition').text(chartOptions.selectedX)
+			bisectsAhead = []
+			for (let i = bisectDate(data, pointer); i < bisectDate(data, pointer) + 30; i++){
+				bisectsAhead.push(data[i])
+			}
+
+			strokeAhead.attr({
+				d: chartValue(bisectsAhead),
+				stroke: 'red',
+				'stroke-width': 1,
+				fill: 'none',
+				class: 'stroke-ahead'
+			})
 
 			focus.attr({
 				transform: `translate(${mainScaleX(chartOptions.selectedX)}, ${mainScaleY(chartOptions.selectedY)})`
@@ -174,7 +198,7 @@ class Comp1 extends React.Component{
 			focus.transition().attr({
 				transform: `translate(${mainScaleX(chartOptions.selectedX)}, ${mainScaleY(chartOptions.selectedY)})`
 			})
-
+			strokeAhead.transition().attr('d', chartValue(bisectsAhead))
 		})
 
 		d3.selectAll('._mooveChart').on('click', function(){
@@ -187,31 +211,19 @@ class Comp1 extends React.Component{
 		})
 
 	}
-	componentDidUpdate(){
-		console.log('comp update')
-		console.log(this.state.selectedValue)
 
-	}
-	showTheState(){
-		console.log('i will show the state')
-		console.log(`the state is: ${this.state.selectedValue}`)
-	}
 	render(){
-		console.log('render')
-		console.log(this.state.selectedValue)
 
 		return(
 			<div>
 				<div className="d3Render"></div>
-				<div className="d3RenderExample"></div>
+				{
+					this.state.selectedValue !== 0 ? <EditForm selectedValue={this.state.selectedValue} /> : null
+				}
 				<button className="_zoomChart" data-zoom="decrement">-</button>
 				<button className="_zoomChart" data-zoom="increment">+</button>
 				<button className="_mooveChart" data-moove="left">{'<'}</button>
 				<button className="_mooveChart" data-moove="right">{'>'}</button>
-				<br/>
-				<br/>
-				<br/>
-				<button onClick={this.showTheState.bind(this)}>showTheState</button>
 			</div>
 		)
 	}
