@@ -69,22 +69,22 @@ class Comp1 extends React.Component{
 
 		let focusGroup = svg.append('g').attr('class', 'focusGroup')
 		let focus = focusGroup.append('circle').attr({
-			r: 3,
+			r: 4,
+			'stroke-width': 2,
 			stroke: 'red',
 			fill: 'none'
 		})
-		let strokeAhead = focusGroup.append('path')
+		let strokeAhead = focusGroup.append('path').attr({
+			stroke: 'red',
+			'stroke-width': 2,
+			fill: 'none',
+			class: 'stroke-ahead'
+		})
 
 		let chartValue = d3.svg.line()
 		.interpolate('monotone')
 		.x(data => mainScaleX(data.date))
 		.y(data => mainScaleY(data.value))
-
-		// let chartValue = d3.svg.area()
-		// .interpolate('monotone')
-		// .x(data => mainScaleX(data.date))
-		// .y0(mainHeight)
-		// .y1(data => mainScaleY(data.value))
 
 		let xAxisSize = d3.svg.axis().scale(mainScaleX).tickSize(mainHeight)
 		let yAxisSize = d3.svg.axis().scale(mainScaleY).ticks(10).orient("right")
@@ -96,8 +96,8 @@ class Comp1 extends React.Component{
 		})
 		.on('mousemove', function(){
 			tooltip.transition().style({
-				left: (d3.event.pageX) + "px",
-				top: (d3.event.pageY - 28) + "px",
+				left: (d3.event.pageX + 20) + "px",
+				top: (d3.event.pageY - 40) + "px",
 				display: 'block',
 				opacity: 1
 			})
@@ -123,11 +123,7 @@ class Comp1 extends React.Component{
 			}
 
 			strokeAhead.attr({
-				d: chartValue(bisectsAhead),
-				stroke: 'red',
-				'stroke-width': 1,
-				fill: 'none',
-				class: 'stroke-ahead'
+				d: chartValue(bisectsAhead)
 			})
 
 			focus.attr({
@@ -173,10 +169,6 @@ class Comp1 extends React.Component{
 			class: 'overlay',
 			fill: 'none'
 		})
-		// .on('mousemove', function(e){
-		// 	console.log('-----')
-		// 	console.log(mainScaleX.invert(d3.mouse(this)[0]))
-		// })
 
 		// HANDLERS
 
