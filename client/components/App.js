@@ -210,13 +210,14 @@ class Comp1 extends React.Component{
 		})
 	}
 
-	componentWillLeave(){
-
-	}
-	mooveRight(){
+	mooveRight(right){
+		// setStates's contains in handlers, transitions - in render
 		this.setState({
-			xPosition: this.state.xPosition + 50
+			xPosition: right ? this.state.xPosition + 50 : this.state.xPosition - 50
 		})
+	}
+	componentWillLeave(){
+		console.log('componentWillLeave')
 	}
 	render(){
 
@@ -236,7 +237,7 @@ class Comp1 extends React.Component{
 		.x(data => mainScaleX(data.date))
 		.y(data => mainScaleY(data.value))
 
-		console.log(this.state.xPosition)
+		d3.selectAll('.main-path').transition().attr('transform', `translate(${this.state.xPosition}, 0)`)
 
 		return(
 			<div>
@@ -252,16 +253,16 @@ class Comp1 extends React.Component{
 
 				<div className="d3PseudoRender">
 					<svg width={mainWidth} height={mainHeight}>
-						<g className="main-path" pointer-events="all">
+						<g className="main-path" pointer-events="all" transform="translate(0, 0)">
 							<path
 								d={chartValue(data)}
 								stroke="mediumslateblue"
-								transform={`translate(${this.state.xPosition}, 0)`}
 								stroke-width="1" fill="none" class="area">
 							</path>
 						</g>
 					</svg>
-					<button onClick={this.mooveRight.bind(this)}>{'>'}</button>
+					<button onClick={this.mooveRight.bind(this, false)}>{'<'}</button>
+					<button onClick={this.mooveRight.bind(this, true)}>{'>'}</button>
 				</div>
 			</div>
 		)
