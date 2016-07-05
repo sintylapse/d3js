@@ -36,9 +36,18 @@ class Comp1 extends React.Component{
 			rangeMax: 1550,
 			xPosition: 0,
 			selectedX: 0,
-			selectedY: 0
+			selectedY: 0,
+			mainWidth: 1000,
+		   	mainHeight: 250
+			// lat 2 actually are not states ^^
 	    };
 	}
+
+
+
+
+
+
 
 	componentDidMount(){
 
@@ -57,10 +66,10 @@ class Comp1 extends React.Component{
 				.range([250, 0])
 		let bisectDate = d3.bisector(data => data.date).right
 
-		let tooltip = d3.select('.d3Render').append('div')
+		let tooltip = d3.select('.d3ChartsRender').append('div')
 		.attr('class', 'tooltip')
 
-		let svg = d3.select('.d3Render').append('svg')
+		let svg = d3.select('.d3ChartsRender').append('svg')
 		.attr({
 			width: mainWidth,
 			height: mainHeight
@@ -208,7 +217,22 @@ class Comp1 extends React.Component{
 			xAxis.transition().attr("transform", `translate(${passComponent.state.xPosition}, -20)`)
 			focusGroup.transition().attr('transform', `translate(${passComponent.state.xPosition}, 0)`)
 		})
+
+		this.d3ChartsRender()
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	mooveRight(right){
 		// setStates's contains in handlers, transitions - in render
@@ -216,14 +240,22 @@ class Comp1 extends React.Component{
 			xPosition: right ? this.state.xPosition + 50 : this.state.xPosition - 50
 		})
 	}
-	componentWillLeave(){
-		console.log('componentWillLeave')
+	zoomChart(increment){
+		if(increment){
+			this.setState({
+				rangeMin: this.state.rangeMin - 100,
+				rangeMax: this.state.rangeMax + 100
+			})
+
+		} else {
+			this.setState({
+				rangeMin: this.state.rangeMin + 100,
+				rangeMax: this.state.rangeMax - 100
+			})
+		}
 	}
-	render(){
 
-		const mainWidth = 1000,
-			mainHeight = 250
-
+	d3ChartsRender(){
 		let mainScaleX = d3.scale.linear().domain([0, data[data.length - 1].date])
 		.range([this.state.rangeMin, this.state.rangeMax])
 
@@ -231,17 +263,25 @@ class Comp1 extends React.Component{
 		.domain([d3.min(data, (d) => d.value), d3.max(data, (d) => d.value)])
 		.range([250, 0])
 
-
 		let chartValue = d3.svg.line()
 		.interpolate('monotone')
 		.x(data => mainScaleX(data.date))
 		.y(data => mainScaleY(data.value))
 
-		d3.selectAll('.main-path').transition().attr('transform', `translate(${this.state.xPosition}, 0)`)
+		// moove chart
+		d3.selectAll('.main-path-group').transition().attr('transform', `translate(${this.state.xPosition}, 0)`)
+
+		// zoom chart
+		d3.selectAll('.main-path').transition().attr('d', chartValue(data))
+	}
+
+	render(){
+
+		this.d3ChartsRender()
 
 		return(
 			<div>
-				<div className="d3Render"></div>
+				<div className="d3ChartsRender"></div>
 				{
 					this.state.selectedValue !== 0 ? <EditForm selectedValue={this.state.selectedValue} /> : null
 				}
@@ -251,16 +291,21 @@ class Comp1 extends React.Component{
 				<button className="_mooveChart" data-moove="right">{'>'}</button>
 				<div className="randElem"></div>
 
+
+
+
 				<div className="d3PseudoRender">
-					<svg width={mainWidth} height={mainHeight}>
-						<g className="main-path" pointer-events="all" transform="translate(0, 0)">
+					<svg width={this.state.mainWidth} height={this.state.mainHeight}>
+						<g className="main-path-group" pointer-events="all" transform="translate(0, 0)">
 							<path
-								d={chartValue(data)}
 								stroke="mediumslateblue"
-								stroke-width="1" fill="none" class="area">
+								stroke-width="1" fill="none"
+								className="main-path">
 							</path>
 						</g>
 					</svg>
+					<button onClick={this.zoomChart.bind(this, false)}>{'-'}</button>
+					<button onClick={this.zoomChart.bind(this, true)}>{'+'}</button>
 					<button onClick={this.mooveRight.bind(this, false)}>{'<'}</button>
 					<button onClick={this.mooveRight.bind(this, true)}>{'>'}</button>
 				</div>
