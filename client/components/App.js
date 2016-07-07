@@ -307,12 +307,12 @@ class Comp1 extends React.Component{
 			})
 		})
 
-		d3.selectAll('.stroke-ahead').transition().attr({d: chartValue(this.state.bisectsAhead), 'stroke-width': 2})
+		d3.selectAll('.stroke-ahead').transition().attr({d: chartValue(this.state.bisectsAhead)})
 
 		d3.selectAll('.focus-circle').attr({
 			transform: `translate(${mainScaleX(this.state.selectedX)}, ${mainScaleY(this.state.selectedY)})`,
 			r: 0
-		}).transition().attr('r', 4).attr('stroke-width', 2)
+		}).transition().attr('r', 4)
 		d3.selectAll('.focus-group').attr('transform', `translate(${this.state.xPosition}, 0)`)
 	}
 
@@ -330,14 +330,14 @@ class Comp1 extends React.Component{
 
 
 						<g className="focus-group">
-							<circle className="focus-circle" stroke-width="2" stroke="red" fill="none"></circle>
-							<path className="stroke-ahead" stroke-width="2" stroke="red" fill="none"></path>
+							<circle className="focus-circle" strokeWidth="2" stroke="red" fill="none"></circle>
+							<path className="stroke-ahead" strokeWidth="2" stroke="red" fill="none"></path>
 						</g>
 
-						<g className="main-path-group" pointer-events="all" transform="translate(0, 0)">
+						<g className="main-path-group" pointerEvents="all" transform="translate(0, 0)">
 							<path
 								stroke="mediumslateblue"
-								stroke-width="1" fill="none"
+								strokeWidth="1" fill="none"
 								className="main-path">
 							</path>
 						</g>
