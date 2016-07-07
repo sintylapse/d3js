@@ -307,17 +307,13 @@ class Comp1 extends React.Component{
 			})
 		})
 
-		d3.selectAll('.stroke-ahead').transition().attr({d: chartValue(this.state.bisectsAhead)})
-		d3.selectAll('.focus-circle').transition().attr({
-			transform: `translate(${mainScaleX(passComponent.state.selectedX)}, ${mainScaleY(passComponent.state.selectedY)})`
-		})
+		d3.selectAll('.stroke-ahead').transition().attr({d: chartValue(this.state.bisectsAhead), 'stroke-width': 2})
 
-		d3.selectAll('.focus-circle').transition().attr({
-			transform: `translate(${mainScaleX(passComponent.state.selectedX)}, ${mainScaleY(passComponent.state.selectedY)})`
-		})
-
-
-		d3.selectAll('.focus-group').transition().attr('transform', `translate(${passComponent.state.xPosition}, 0)`)
+		d3.selectAll('.focus-circle').attr({
+			transform: `translate(${mainScaleX(this.state.selectedX)}, ${mainScaleY(this.state.selectedY)})`,
+			r: 0
+		}).transition().attr('r', 4).attr('stroke-width', 2)
+		d3.selectAll('.focus-group').attr('transform', `translate(${this.state.xPosition}, 0)`)
 	}
 
 	render(){
@@ -326,10 +322,6 @@ class Comp1 extends React.Component{
 
 		return(
 			<div>
-
-
-
-
 				<div className="d3Render">
 					{
 						this.state.selectedValue !== 0 ? <EditForm selectedValue={this.state.selectedValue} /> : null
@@ -338,7 +330,7 @@ class Comp1 extends React.Component{
 
 
 						<g className="focus-group">
-							<circle className="focus-circle" r="4" stroke-width="2" stroke="red" fill="none"></circle>
+							<circle className="focus-circle" stroke-width="2" stroke="red" fill="none"></circle>
 							<path className="stroke-ahead" stroke-width="2" stroke="red" fill="none"></path>
 						</g>
 
