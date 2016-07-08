@@ -140,10 +140,12 @@ export default class App extends React.Component{
 						<g className="yAxis" transform={`translate(${this.state.mainWidth - 50}, 0)`} fill="none"></g>
 
 					</svg>
-					<button onClick={this.zoomChart.bind(this, false)}>{'-'}</button>
-					<button onClick={this.zoomChart.bind(this, true)}>{'+'}</button>
-					<button onClick={this.mooveRight.bind(this, false)}>{'<'}</button>
-					<button onClick={this.mooveRight.bind(this, true)}>{'>'}</button>
+					<div>
+						<button onClick={this.zoomChart.bind(this, false)}>{'-'}</button>
+						<button onClick={this.zoomChart.bind(this, true)}>{'+'}</button>
+						<button onClick={this.mooveRight.bind(this, false)}>{'<'}</button>
+						<button onClick={this.mooveRight.bind(this, true)}>{'>'}</button>
+					</div>
 				</div>
 			</div>
 		)

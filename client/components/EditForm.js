@@ -53,7 +53,7 @@ export default class EditForm extends React.Component{
 	render(){
 
 		return(
-			<div className='editForm'>
+			<div id='edit-form'>
 				<div>
 					Выбранное значение:<span class="selectedPosition">{this.props.selectedValue}</span>
 				</div>
@@ -75,13 +75,13 @@ export default class EditForm extends React.Component{
 	renderMessage(){
 		if (this.state.resultView.message === "win") {
 			return (
-				<div>
+				<div className="result-view-win">
 					<strong>You win {this.state.resultView.value}</strong>
 				</div>
 			)
 		} else if (this.state.resultView.message = "lose"){
 			return (
-				<div>
+				<div className="result-view-lose">
 					<strong>You lose {this.state.resultView.value}</strong>
 				</div>
 			)
