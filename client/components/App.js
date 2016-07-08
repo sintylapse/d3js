@@ -22,7 +22,9 @@ export default class App extends React.Component{
 			mainWidth: 1000,
 		   	mainHeight: 250,
 			// lat 2 actually are not states ^^
-			bisectsAhead: []
+			bisectsAhead: [],
+			predictionPath: [],
+			entryPoint: 0
 	    };
 	}
 
@@ -51,6 +53,71 @@ export default class App extends React.Component{
 		}
 	}
 
+	predictionCycle(){
+		let entryPoint = this.state.entryPoint
+		let resultArray = []
+
+		resultArray.push(data[entryPoint])
+
+		const passComponent = this
+
+		setInterval(() => {
+			entryPoint += 1
+			resultArray.push(data[entryPoint])
+			this.setState({
+				predictionPath: resultArray
+			})
+			console.log('tick');
+		}, 2000)
+
+
+	}
+
+	render(){
+
+		this.d3ChartsRender()
+
+		console.log(this.state.predictionPath);
+		return(
+			<div>
+				<div className="d3Render">
+					{
+						this.state.selectedValue &&
+						<EditForm bisectsAhead={this.state.bisectsAhead} selectedValue={this.state.selectedValue} />
+					}
+					<svg width={this.state.mainWidth} height={this.state.mainHeight}>
+
+						<g className="prediction-group">
+							<path className="prediction-path" strokeWidth="2" stroke="green" fill="none"></path>
+						</g>
+						<g className="focus-group">
+							<circle className="focus-circle" strokeWidth="2" stroke="red" fill="none"></circle>
+							<path className="stroke-ahead" strokeWidth="2" stroke="red" fill="none"></path>
+						</g>
+
+						<g className="main-path-group" pointerEvents="all" transform="translate(0, 0)">
+							<path
+								stroke="mediumslateblue"
+								strokeWidth="1" fill="none"
+								className="main-path">
+							</path>
+						</g>
+						<g className="xAxis" transform="translate(0, -20)" fill="none"></g>
+						<g className="yAxis" transform={`translate(${this.state.mainWidth - 50}, 0)`} fill="none"></g>
+
+					</svg>
+					<div>
+						<button onClick={this.zoomChart.bind(this, false)}>{'-'}</button>
+						<button onClick={this.zoomChart.bind(this, true)}>{'+'}</button>
+						<button onClick={this.mooveRight.bind(this, false)}>{'<'}</button>
+						<button onClick={this.mooveRight.bind(this, true)}>{'>'}</button>
+						<button onClick={this.predictionCycle.bind(this)}>Prediction Cycle</button>
+					</div>
+				</div>
+			</div>
+		)
+	}
+
 	d3ChartsRender(){
 		let mainScaleX = d3.scale.linear().domain([0, data[data.length - 1].date])
 		.range([this.state.rangeMin, this.state.rangeMax])
@@ -74,6 +141,7 @@ export default class App extends React.Component{
 
 		// moove chart
 		d3.selectAll('.main-path-group').transition().attr('transform', `translate(${this.state.xPosition}, 0)`)
+		d3.selectAll('.prediction-group').transition().attr('transform', `translate(${this.state.xPosition}, 0)`)
 
 		// zoom chart
 		d3.selectAll('.main-path').transition().attr('d', chartValue(data))
@@ -98,57 +166,20 @@ export default class App extends React.Component{
 			}
 
 			passComponent.setState({
-				selectedValue: passComponent.state.selectedX
+				selectedValue: passComponent.state.selectedX,
+				entryPoint: bisectDate(data, pointer)
 			})
 		})
 
-		d3.selectAll('.stroke-ahead').transition().attr({d: chartValue(this.state.bisectsAhead)})
+		// d3.selectAll('.stroke-ahead').transition().attr({d: chartValue(this.state.bisectsAhead)})
 
 		d3.selectAll('.focus-circle').transition().attr({
 			transform: `translate(${mainScaleX(this.state.selectedX)}, ${mainScaleY(this.state.selectedY)})`,
 			r: 0
 		}).transition().attr('r', 4)
 		d3.selectAll('.focus-group').transition().attr('transform', `translate(${this.state.xPosition}, 0)`)
-	}
 
-	render(){
-
-		this.d3ChartsRender()
-
-		return(
-			<div>
-				<div className="d3Render">
-					{
-						this.state.selectedValue && <EditForm bisectsAhead={this.state.bisectsAhead} selectedValue={this.state.selectedValue} />
-					}
-					<svg width={this.state.mainWidth} height={this.state.mainHeight}>
-
-
-						<g className="focus-group">
-							<circle className="focus-circle" strokeWidth="2" stroke="red" fill="none"></circle>
-							<path className="stroke-ahead" strokeWidth="2" stroke="red" fill="none"></path>
-						</g>
-
-						<g className="main-path-group" pointerEvents="all" transform="translate(0, 0)">
-							<path
-								stroke="mediumslateblue"
-								strokeWidth="1" fill="none"
-								className="main-path">
-							</path>
-						</g>
-						<g className="xAxis" transform="translate(0, -20)" fill="none"></g>
-						<g className="yAxis" transform={`translate(${this.state.mainWidth - 50}, 0)`} fill="none"></g>
-
-					</svg>
-					<div>
-						<button onClick={this.zoomChart.bind(this, false)}>{'-'}</button>
-						<button onClick={this.zoomChart.bind(this, true)}>{'+'}</button>
-						<button onClick={this.mooveRight.bind(this, false)}>{'<'}</button>
-						<button onClick={this.mooveRight.bind(this, true)}>{'>'}</button>
-					</div>
-				</div>
-			</div>
-		)
+		d3.selectAll('.prediction-path').transition().attr({d: chartValue(this.state.predictionPath)})
 	}
 }
 
