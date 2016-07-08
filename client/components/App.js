@@ -24,7 +24,12 @@ export default class App extends React.Component{
 			// lat 2 actually are not states ^^
 			bisectsAhead: [],
 			predictionPath: [],
-			entryPoint: 0
+			entryPoint: 0,
+			lastPoint: 0,
+			resultView: {
+				message: false,
+				value: 0
+			}
 	    };
 	}
 
@@ -53,10 +58,10 @@ export default class App extends React.Component{
 		}
 	}
 
-	predictionCycle(){
+	predictionCycle(direction, rateValue){
 		let entryPoint = this.state.entryPoint
 		let resultArray = []
-
+		console.log(this.state.textColor);
 		resultArray.push(data[entryPoint])
 
 		const passComponent = this
@@ -64,11 +69,47 @@ export default class App extends React.Component{
 		setInterval(() => {
 			entryPoint += 1
 			resultArray.push(data[entryPoint])
+
+			// конечное значение не будет определено
+			// не будет массива bisectsAhead
+			rateValue = rateValue ? rateValue : 1
+
+			let difference = resultArray[resultArray.length - 1].value - resultArray[0].value
+			let result = Math.abs(difference * rateValue)
+
+			if (difference > 0 && direction === 'buy' || difference < 0 && direction === 'sell') {
+				console.log(1);
+				this.setState({
+					resultView: {
+						message: 'win',
+						value: result
+					}
+				})
+			} else if (difference < 0 && direction === 'buy' || difference > 0 && direction === 'sell') {
+				console.log(2);
+				this.setState({
+					resultView: {
+						message: 'lose',
+						value: result
+					}
+				})
+			} else {
+				console.log(3);
+				this.setState({
+					resultView: {
+						message: 'nothing',
+						value: result
+					}
+				})
+			}
+			console.log(difference);
 			this.setState({
-				predictionPath: resultArray
+				predictionPath: resultArray,
+				lastPoint: resultArray[resultArray.length - 1].value
 			})
 			console.log('tick');
 		}, 2000)
+
 
 
 	}
@@ -77,13 +118,17 @@ export default class App extends React.Component{
 
 		this.d3ChartsRender()
 
-		console.log(this.state.predictionPath);
 		return(
 			<div>
 				<div className="d3Render">
 					{
 						this.state.selectedValue &&
-						<EditForm bisectsAhead={this.state.bisectsAhead} selectedValue={this.state.selectedValue} />
+						<EditForm bisectsAhead={this.state.bisectsAhead}
+						selectedValue={this.state.selectedValue}
+						predictionCycle={this.predictionCycle.bind(this)}
+						entryPoint={this.state.entryPoint}
+						lastPoint={this.state.lastPoint}
+						resultView={this.state.resultView}/>
 					}
 					<svg width={this.state.mainWidth} height={this.state.mainHeight}>
 

@@ -5,47 +5,12 @@ export default class EditForm extends React.Component{
 	constructor(props){
 		super(props)
 		this.state = {
-			rateValue: 0,
-			resultView: {
-				message: false,
-				value: 0
-			}
+			rateValue: 0
 		}
 	}
-	prediction(direction){
-		// конечное значение не будет определено
-		// не будет массива bisectsAhead
-		const
-			rateValue = this.refs.rateInput.value ? this.refs.rateInput.value : 1,
-			bisectsAhead = this.props.bisectsAhead,
-			bisectsAheadFirst = bisectsAhead[0],
-			bisectsAheadLast = bisectsAhead[bisectsAhead.length - 1]
+	predictionCycleStart(direction){
 
-		let difference = bisectsAheadLast.value - bisectsAheadFirst.value
-		let result = Math.abs(difference * rateValue)
-
-		if (difference > 0 && direction === 'buy' || difference < 0 && direction === 'sell') {
-			this.setState({
-				resultView: {
-					message: 'win',
-					value: result
-				}
-			})
-		} else if (difference < 0 && direction === 'buy' || difference > 0 && direction === 'sell') {
-			this.setState({
-				resultView: {
-					message: 'lose',
-					value: result
-				}
-			})
-		} else {
-			this.setState({
-				resultView: {
-					message: 'nothing',
-					value: result
-				}
-			})
-		}
+		this.props.predictionCycle(direction, this.refs.rateInput.value)
 	}
 	rateValueSet(event){
 		console.log(event.target.value)
@@ -62,27 +27,27 @@ export default class EditForm extends React.Component{
 				</div>
 				<br/>Начать?<br/>
 				<div>
-					<button className="confirm" onClick={this.prediction.bind(this, 'buy')}>Вверх</button>
-					<button className="reject" onClick={this.prediction.bind(this, 'sell')}>Вниз</button>
+					<button className="confirm" onClick={this.predictionCycleStart.bind(this, 'buy')}>Вверх</button>
+					<button className="reject" onClick={this.predictionCycleStart.bind(this, 'sell')}>Вниз</button>
 				</div>
 				<br />
 				{
-					this.state.resultView.message && this.renderMessage()
+					this.props.resultView.message && this.renderMessage()
 				}
 			</div>
 		)
 	}
 	renderMessage(){
-		if (this.state.resultView.message === "win") {
+		if (this.props.resultView.message === "win") {
 			return (
 				<div className="result-view-win">
-					<strong>You win {this.state.resultView.value}</strong>
+					<strong>You win {this.props.resultView.value}</strong>
 				</div>
 			)
-		} else if (this.state.resultView.message = "lose"){
+		} else if (this.props.resultView.message === "lose"){
 			return (
 				<div className="result-view-lose">
-					<strong>You lose {this.state.resultView.value}</strong>
+					<strong>You lose {this.props.resultView.value}</strong>
 				</div>
 			)
 		} else {
