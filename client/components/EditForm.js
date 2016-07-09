@@ -29,18 +29,15 @@ export default class EditForm extends React.Component{
 					Вложенное значение:<br /><input ref="rateInput" type="text"/>
 				</div>
 				{
-					!this.props.predictionInitialized && <div>
+					!this.props.predictionInitialized ? <div>
 						<br/>Начать?<br/>
 						<div>
 							<button className="confirm" onClick={this.predictionCycleStart.bind(this, 'buy')}>Вверх</button>
 							<button className="reject" onClick={this.predictionCycleStart.bind(this, 'sell')}>Вниз</button>
 						</div>
-					</div>
-				}
+					</div> : <button onClick={this.predictionCycleEnd.bind(this)}>Закончить</button>
 
-				<div>
-					<button onClick={this.predictionCycleEnd.bind(this)}>Закончить</button>
-				</div>
+				}
 				<br />
 				{
 					this.props.resultView.message && this.renderMessage()

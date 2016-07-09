@@ -1,6 +1,18 @@
+@import "./_frame.styl"
 @import "./_mixins.styl"
 
 $color-1= mediumslateblue
+// frames -
+
+button
+	padding 5px 10px
+	border: 1px solid $color-1
+	color $color-1
+	&:not(:last-child)
+		margin-right 10px
+
+// - frames
+
 #app-render
 	position relative
 .d3Render

@@ -5,6 +5,7 @@ import $ from 'jquery'
 import data from './data.js'
 
 import EditForm from './EditForm.js'
+import StatisticLog from './StatisticLog.js'
 
 export default class App extends React.Component{
 
@@ -30,7 +31,8 @@ export default class App extends React.Component{
 				message: false,
 				value: 0
 			},
-			predictionInitialized: false
+			predictionInitialized: false,
+			statiticStore: []
 	    };
 	}
 
@@ -128,14 +130,26 @@ export default class App extends React.Component{
 		})
 		clearInterval(this.predinctionInterval)
 		this.predinctionInterval = null
+
+		let
+			newData = this.state.statiticStore,
+			newObj = {}
+
+		newObj.predictionPath = this.state.predictionPath
+		newObj.resultView = this.state.resultView
+		newData.push(newObj)
+		this.setState({
+			statiticStore: newData
+		})
+
 	}
 
 	render(){
 
 		this.d3ChartsRender()
-
+		
 		return(
-			<div>
+			<div className="container">
 				<div className="d3Render">
 					{
 						this.state.selectedValue &&
@@ -168,12 +182,14 @@ export default class App extends React.Component{
 
 					</svg>
 					<div>
-						<button onClick={this.zoomChart.bind(this, false)}>{'-'}</button>
-						<button onClick={this.zoomChart.bind(this, true)}>{'+'}</button>
-						<button onClick={this.mooveRight.bind(this, false)}>{'<'}</button>
-						<button onClick={this.mooveRight.bind(this, true)}>{'>'}</button>
+						<button onClick={this.zoomChart.bind(this, false)} className="btn">{'-'}</button>
+						<button onClick={this.zoomChart.bind(this, true)} className="btn">{'+'}</button>
+						<button onClick={this.mooveRight.bind(this, false)} className="btn">{'<'}</button>
+						<button onClick={this.mooveRight.bind(this, true)} className="btn">{'>'}</button>
 					</div>
 				</div>
+				<StatisticLog statiticStore={this.state.statiticStore}/>
+
 			</div>
 		)
 	}

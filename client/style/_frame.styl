@@ -1,0 +1,100 @@
+*
+  margin: 0px auto;
+  padding: 0px;
+  outline: none;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+body
+  font-size 16px
+  font-family: $font-regular
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+menu,
+nav,
+section,
+summary {
+  display: block;
+}
+
+.cfix
+  cfix()
+
+.container
+  cfix()
+  max-width: 1500px;
+  width: 100%;
+  padding 0px 15px
+
+.row
+  cfix()
+  position: relative;
+
+input[type="submit"], fieldset, button
+  border 0
+  background 0 0
+
+button
+  cursor pointer
+
+a, a:hover, a:visited, a:active, a:focus
+  color: inherit;
+  text-decoration: none;
+a img
+    color: inherit;
+    text-decoration: none;
+img
+  max-width: 100%
+ul
+  padding 0
+  margin 0
+  li
+    list-style: none;
+
+.bold, strong, b
+  font-weight: normal;
+  font-family: $font-bold
+.fll
+  float: left;
+.flr
+  float: right;
+.displnone
+  display: none;
+.hidden
+  opacity 0
+  visibility hidden
+.visible
+  visibility visible
+  opacity 1
+
+for i in (1..12)
+  .col-{i}
+    min-height 1px
+    float left
+    width (100 * i / 12)%
+
+
+@media(max-width: 1600px)
+  .container
+    max-width: 1350px
+
+@media(max-width: 1400px)
+  .container
+    max-width: 1140px
+
+@media(max-width: 1200px)
+  .container
+    max-width: 980px
+
+@media(max-width: 720px)
+  for i in (1..12)
+    .col-{i}
+      width 100%
