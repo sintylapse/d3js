@@ -1,3 +1,5 @@
+@import "./_mixins.styl"
+
 $color-1= mediumslateblue
 #app-render
 	position relative
@@ -24,10 +26,14 @@ $color-1= mediumslateblue
 		color $color-1
 	.reject
 		color red
-	.result-view-win
-		color: $color-1
-	.result-view-lose
-		color: red
+	.result-view
+		trans()
+		&.win
+			color: $color-1
+		&.lose
+			color: red
+
+
 .tick
 	fill black
 .displnone

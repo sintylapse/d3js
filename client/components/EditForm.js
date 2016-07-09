@@ -12,6 +12,9 @@ export default class EditForm extends React.Component{
 
 		this.props.predictionCycle(direction, this.refs.rateInput.value)
 	}
+	predictionCycleEnd(){
+		this.props.predictionEnd()
+	}
 	rateValueSet(event){
 		console.log(event.target.value)
 	}
@@ -25,10 +28,18 @@ export default class EditForm extends React.Component{
 				<div>
 					Вложенное значение:<br /><input ref="rateInput" type="text"/>
 				</div>
-				<br/>Начать?<br/>
+				{
+					!this.props.predictionInitialized && <div>
+						<br/>Начать?<br/>
+						<div>
+							<button className="confirm" onClick={this.predictionCycleStart.bind(this, 'buy')}>Вверх</button>
+							<button className="reject" onClick={this.predictionCycleStart.bind(this, 'sell')}>Вниз</button>
+						</div>
+					</div>
+				}
+
 				<div>
-					<button className="confirm" onClick={this.predictionCycleStart.bind(this, 'buy')}>Вверх</button>
-					<button className="reject" onClick={this.predictionCycleStart.bind(this, 'sell')}>Вниз</button>
+					<button onClick={this.predictionCycleEnd.bind(this)}>Закончить</button>
 				</div>
 				<br />
 				{
@@ -40,19 +51,19 @@ export default class EditForm extends React.Component{
 	renderMessage(){
 		if (this.props.resultView.message === "win") {
 			return (
-				<div className="result-view-win">
+				<div className="result-view win">
 					<strong>You win {this.props.resultView.value}</strong>
 				</div>
 			)
 		} else if (this.props.resultView.message === "lose"){
 			return (
-				<div className="result-view-lose">
+				<div className="result-view lose">
 					<strong>You lose {this.props.resultView.value}</strong>
 				</div>
 			)
 		} else {
 			return (
-				<div>
+				<div className="result-view nothing">
 					<strong>You win nothing</strong>
 				</div>
 			)

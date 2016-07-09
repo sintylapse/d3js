@@ -29,7 +29,8 @@ export default class App extends React.Component{
 			resultView: {
 				message: false,
 				value: 0
-			}
+			},
+			predictionInitialized: false
 	    };
 	}
 
@@ -40,7 +41,7 @@ export default class App extends React.Component{
 	mooveRight(right){
 		// setStates's contains in handlers, transitions - in render
 		this.setState({
-			xPosition: right ? this.state.xPosition + 50 : this.state.xPosition - 50
+			xPosition: right ? this.state.xPosition - 50 : this.state.xPosition + 50
 		})
 	}
 	zoomChart(increment){
@@ -61,57 +62,72 @@ export default class App extends React.Component{
 	predictionCycle(direction, rateValue){
 		let entryPoint = this.state.entryPoint
 		let resultArray = []
-		console.log(this.state.textColor);
 		resultArray.push(data[entryPoint])
 
-		const passComponent = this
+		// #interval
+		const iterationTime = 500
+		console.log(this.predinctionInterval);
 
-		setInterval(() => {
-			entryPoint += 1
-			resultArray.push(data[entryPoint])
+		if (!this.predinctionInterval) {
+			this.predinctionInterval = setInterval(() => {
 
-			// конечное значение не будет определено
-			// не будет массива bisectsAhead
-			rateValue = rateValue ? rateValue : 1
+				entryPoint += 1
+				resultArray.push(data[entryPoint])
 
-			let difference = resultArray[resultArray.length - 1].value - resultArray[0].value
-			let result = Math.abs(difference * rateValue)
+				// конечное значение не будет определено
+				// не будет массива bisectsAhead
+				rateValue = rateValue ? rateValue : 1
 
-			if (difference > 0 && direction === 'buy' || difference < 0 && direction === 'sell') {
-				console.log(1);
+				let difference = resultArray[resultArray.length - 1].value - resultArray[0].value
+				let result = Math.abs(difference * rateValue)
+
+				if (difference > 0 && direction === 'buy' || difference < 0 && direction === 'sell') {
+					this.setState({
+						resultView: {
+							message: 'win',
+							value: result
+						}
+					})
+				} else if (difference < 0 && direction === 'buy' || difference > 0 && direction === 'sell') {
+					this.setState({
+						resultView: {
+							message: 'lose',
+							value: result
+						}
+					})
+				} else {
+					this.setState({
+						resultView: {
+							message: 'nothing',
+							value: result
+						}
+					})
+				}
+
 				this.setState({
-					resultView: {
-						message: 'win',
-						value: result
-					}
+					predictionPath: resultArray,
+					lastPoint: resultArray[resultArray.length - 1].value
 				})
-			} else if (difference < 0 && direction === 'buy' || difference > 0 && direction === 'sell') {
-				console.log(2);
-				this.setState({
-					resultView: {
-						message: 'lose',
-						value: result
-					}
-				})
-			} else {
-				console.log(3);
-				this.setState({
-					resultView: {
-						message: 'nothing',
-						value: result
-					}
-				})
-			}
-			console.log(difference);
-			this.setState({
-				predictionPath: resultArray,
-				lastPoint: resultArray[resultArray.length - 1].value
-			})
-			console.log('tick');
-		}, 2000)
+				console.log('tick');
+
+			}, iterationTime)
+
+		}
 
 
+		this.setState({
+			predictionInitialized: true
+		})
 
+	}
+
+	predictionEnd(){
+		console.log('END');
+		this.setState({
+			predictionInitialized: false
+		})
+		clearInterval(this.predinctionInterval)
+		this.predinctionInterval = null
 	}
 
 	render(){
@@ -128,24 +144,24 @@ export default class App extends React.Component{
 						predictionCycle={this.predictionCycle.bind(this)}
 						entryPoint={this.state.entryPoint}
 						lastPoint={this.state.lastPoint}
-						resultView={this.state.resultView}/>
+						resultView={this.state.resultView}
+						predictionEnd={this.predictionEnd.bind(this)}
+						predictionInitialized={this.state.predictionInitialized}/>
 					}
 					<svg width={this.state.mainWidth} height={this.state.mainHeight}>
+						<g className="global-group">
+							<g className="prediction-group">
+								<circle className="prediction-circle" strokeWidth="2" stroke="green" fill="none" r="4"></circle>
+								<path className="prediction-path" strokeWidth="2" stroke="green" fill="none"></path>
+							</g>
 
-						<g className="prediction-group">
-							<path className="prediction-path" strokeWidth="2" stroke="green" fill="none"></path>
-						</g>
-						<g className="focus-group">
-							<circle className="focus-circle" strokeWidth="2" stroke="red" fill="none"></circle>
-							<path className="stroke-ahead" strokeWidth="2" stroke="red" fill="none"></path>
-						</g>
-
-						<g className="main-path-group" pointerEvents="all" transform="translate(0, 0)">
-							<path
-								stroke="mediumslateblue"
-								strokeWidth="1" fill="none"
-								className="main-path">
-							</path>
+							<g className="main-path-group" pointerEvents="all" transform="translate(0, 0)">
+								<path
+									stroke="mediumslateblue"
+									strokeWidth="1" fill="none"
+									className="main-path">
+								</path>
+							</g>
 						</g>
 						<g className="xAxis" transform="translate(0, -20)" fill="none"></g>
 						<g className="yAxis" transform={`translate(${this.state.mainWidth - 50}, 0)`} fill="none"></g>
@@ -156,7 +172,6 @@ export default class App extends React.Component{
 						<button onClick={this.zoomChart.bind(this, true)}>{'+'}</button>
 						<button onClick={this.mooveRight.bind(this, false)}>{'<'}</button>
 						<button onClick={this.mooveRight.bind(this, true)}>{'>'}</button>
-						<button onClick={this.predictionCycle.bind(this)}>Prediction Cycle</button>
 					</div>
 				</div>
 			</div>
@@ -185,13 +200,12 @@ export default class App extends React.Component{
 		d3.selectAll('.yAxis').call(yAxisSize)
 
 		// moove chart
-		d3.selectAll('.main-path-group').transition().attr('transform', `translate(${this.state.xPosition}, 0)`)
-		d3.selectAll('.prediction-group').transition().attr('transform', `translate(${this.state.xPosition}, 0)`)
+		d3.selectAll('.global-group').transition().attr('transform', `translate(${this.state.xPosition}, 0)`)
 
 		// zoom chart
 		d3.selectAll('.main-path').transition().attr('d', chartValue(data))
 
-		const passComponent = this
+		const self = this
 
 
 		let bisectDate = d3.bisector(data => data.date).right
@@ -199,30 +213,30 @@ export default class App extends React.Component{
 		d3.selectAll('.main-path-group').on('click', function(){
 			let pointer = mainScaleX.invert(d3.mouse(this)[0])
 
-			passComponent.setState({
+			self.setState({
 				selectedX: data[bisectDate(data, pointer)].date,
 				selectedY: data[bisectDate(data, pointer)].value
 			})
 
 			// #bisect
-			passComponent.state.bisectsAhead = []
+			self.state.bisectsAhead = []
 			for (let i = bisectDate(data, pointer); i < bisectDate(data, pointer) + 50; i++){
-				passComponent.state.bisectsAhead.push(data[i])
+				self.state.bisectsAhead.push(data[i])
 			}
 
-			passComponent.setState({
-				selectedValue: passComponent.state.selectedX,
+			self.setState({
+				selectedValue: self.state.selectedX,
 				entryPoint: bisectDate(data, pointer)
 			})
 		})
 
-		// d3.selectAll('.stroke-ahead').transition().attr({d: chartValue(this.state.bisectsAhead)})
+		if (this.state.predictionInitialized) {
+			d3.selectAll('.main-path-group').on('click', null)
+		}
 
-		d3.selectAll('.focus-circle').transition().attr({
+		d3.selectAll('.prediction-circle').transition().attr({
 			transform: `translate(${mainScaleX(this.state.selectedX)}, ${mainScaleY(this.state.selectedY)})`,
-			r: 0
-		}).transition().attr('r', 4)
-		d3.selectAll('.focus-group').transition().attr('transform', `translate(${this.state.xPosition}, 0)`)
+		})
 
 		d3.selectAll('.prediction-path').transition().attr({d: chartValue(this.state.predictionPath)})
 	}

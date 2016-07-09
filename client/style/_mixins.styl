@@ -1,0 +1,82 @@
+cfix()
+  &:before, &:after
+    content: " ";
+    display: table;
+  &:after
+    clear: both;
+
+trans($a = .3s)
+  -webkit-transition all $a ease-in-out
+  -o-transition all $a ease-in-out
+  transition all $a ease-in-out
+
+transRotate($a)
+  -webkit-transform rotate($a deg)
+  -ms-transform rotate($a deg)
+  -o-transform rotate($a deg)
+  transform rotate($a deg)
+
+placehold()
+  &::-webkit-input-placeholder
+    {block}
+  &::-moz-placeholder
+    {block}
+  &:-moz-placeholder
+    {block}
+  &:-ms-input-placeholder
+    {block}
+
+trans3d(a,b,c)
+  -webkit-transform translate3d(a,b,c)
+  -ms-transform translate3d(a,b,c)
+  -o-transform translate3d(a,b,c)
+  transform translate3d(a,b,c)
+
+fadeUpFirst()
+  trans()
+  trans3d(0,10%,0)
+  visibility: hidden;
+  opacity: 0
+fadeUpSecond()
+  trans3d(0,0%,0)
+  visibility: visible;
+  opacity: 1
+
+boxShad($a= (0px 1px 1px #dfdfdf))
+  -webkit-box-shadow $a
+  -moz-box-shadow $a
+  -o-box-shadow $a
+  box-shadow $a
+
+bordRad($a= 5px)
+  -webkit-border-radius $a
+  -moz-border-radius $a
+  -ms-border-radius $a
+  -o-border-radius $a
+  border-radius $a
+
+transScale($a)
+  -webkit-transform scale($a)
+  -ms-transform scale($a)
+  -o-transform scale($a)
+  transform scale($a)
+
+
+@keyframes fadeInUpSmall
+    0%
+        opacity: 0;
+        -webkit-transform: translate3d(0, 20%, 0);
+        transform: translate3d(0, 20%, 0);
+
+
+    100%
+        opacity: 1;
+        -webkit-transform: none;
+        transform: none;
+
+
+fadeInUpSmall($a = 1s)
+    -webkit-animation-duration: $a;
+    animation-duration: $a;
+    -webkit-animation-name: fadeInUpSmall;
+    animation-name: fadeInUpSmall;
