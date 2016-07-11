@@ -1,7 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import d3 from 'd3'
-import $ from 'jquery'
 import data from './data.js'
 
 import EditForm from './EditForm.js'
@@ -149,9 +148,6 @@ export default class App extends React.Component{
 	render(){
 
 		this.d3ChartsRender()
-
-		console.log(localStorage.getItem('data'));
-		console.log(this.state.statiticStore);
 
 		return(
 			<div className="container">
