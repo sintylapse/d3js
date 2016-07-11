@@ -10,7 +10,7 @@ export default class EditForm extends React.Component{
 	}
 	predictionCycleStart(direction){
 
-		this.props.predictionCycle(direction, this.refs.rateInput.value)
+		this.props.predictionCycle(direction, this.refs.rateInput.value, this.refs.iterationTimeInput.value)
 	}
 	predictionCycleEnd(){
 		this.props.predictionEnd()
@@ -25,18 +25,24 @@ export default class EditForm extends React.Component{
 				<div>
 					Выбранное значение:<span class="selectedPosition">{this.props.selectedValue}</span>
 				</div>
-				<div>
-					Вложенное значение:<br /><input ref="rateInput" type="text"/>
-				</div>
+
 				{
 					!this.props.predictionInitialized ? <div>
+						<div>
+							Вложенное значение:<br /><input ref="rateInput" type="text"/>
+						</div>
+						<br />
+						<div>
+							Скорость: <br /><input ref="iterationTimeInput" type="text" />
+						</div>
 						<br/>Начать?<br/>
 						<div>
 							<button className="confirm" onClick={this.predictionCycleStart.bind(this, 'buy')}>Вверх</button>
 							<button className="reject" onClick={this.predictionCycleStart.bind(this, 'sell')}>Вниз</button>
 						</div>
-					</div> : <button onClick={this.predictionCycleEnd.bind(this)}>Закончить</button>
-
+					</div> : <div>
+						<button onClick={this.predictionCycleEnd.bind(this)}>Закончить</button>
+					</div>
 				}
 				<br />
 				{

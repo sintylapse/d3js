@@ -1,5 +1,6 @@
 @import "./_frame.styl"
 @import "./_mixins.styl"
+@import "./_animation.styl"
 
 $color-1= mediumslateblue
 // frames -
@@ -26,6 +27,14 @@ button
 	background white
 	opacity: 0
 	display none
+
+.main-spinner
+	animateSpin(1s)
+	position absolute
+	top 20px
+	left 20px
+	font-size 24px
+
 
 #edit-form
 	position absolute

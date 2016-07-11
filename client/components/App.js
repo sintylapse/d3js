@@ -23,7 +23,6 @@ export default class App extends React.Component{
 			mainWidth: 1000,
 		   	mainHeight: 250,
 			// lat 2 actually are not states ^^
-			bisectsAhead: [],
 			predictionPath: [],
 			entryPoint: 0,
 			lastPoint: 0,
@@ -32,7 +31,7 @@ export default class App extends React.Component{
 				value: 0
 			},
 			predictionInitialized: false,
-			statiticStore: []
+			statiticStore: localStorage.length ? JSON.parse(localStorage.getItem('data')) : []
 	    };
 	}
 
@@ -61,47 +60,48 @@ export default class App extends React.Component{
 		}
 	}
 
-	predictionCycle(direction, rateValue){
-		let entryPoint = this.state.entryPoint
-		let resultArray = []
-		resultArray.push(data[entryPoint])
+	// #interval
+	predictionCycle(direction, rateValue, iterationTime){
+		let
+			entryPoint = this.state.entryPoint,
+			// resultArray = this.state.predictionPath
+			resultArray = []
 
-		// #interval
-		const iterationTime = 500
-		console.log(this.predinctionInterval);
+		resultArray.push(data[entryPoint])
+		iterationTime = iterationTime ? iterationTime: 500
 
 		if (!this.predinctionInterval) {
 			this.predinctionInterval = setInterval(() => {
 
 				entryPoint += 1
-				resultArray.push(data[entryPoint])
+				let secondPoint = entryPoint
+				resultArray.push(data[secondPoint])
 
-				// конечное значение не будет определено
-				// не будет массива bisectsAhead
 				rateValue = rateValue ? rateValue : 1
 
 				let difference = resultArray[resultArray.length - 1].value - resultArray[0].value
 				let result = Math.abs(difference * rateValue)
 
+
 				if (difference > 0 && direction === 'buy' || difference < 0 && direction === 'sell') {
 					this.setState({
 						resultView: {
 							message: 'win',
-							value: result
+							value: `+${result}`
 						}
 					})
 				} else if (difference < 0 && direction === 'buy' || difference > 0 && direction === 'sell') {
 					this.setState({
 						resultView: {
 							message: 'lose',
-							value: result
+							value: `-${result}`
 						}
 					})
 				} else {
 					this.setState({
 						resultView: {
 							message: 'nothing',
-							value: result
+							value: `${result}`
 						}
 					})
 				}
@@ -139,22 +139,27 @@ export default class App extends React.Component{
 		newObj.resultView = this.state.resultView
 		newData.push(newObj)
 		this.setState({
-			statiticStore: newData
+			statiticStore: newData,
+			// predictionPath: [],
+			// resultView: {}
 		})
-
+		localStorage.setItem('data', JSON.stringify(newData))
 	}
 
 	render(){
 
 		this.d3ChartsRender()
-		
+
+		console.log(localStorage.getItem('data'));
+		console.log(this.state.statiticStore);
+
 		return(
 			<div className="container">
+				{this.state.predictionInitialized && <i className="icon-spin4 main-spinner"></i>}
 				<div className="d3Render">
 					{
 						this.state.selectedValue &&
-						<EditForm bisectsAhead={this.state.bisectsAhead}
-						selectedValue={this.state.selectedValue}
+						<EditForm selectedValue={this.state.selectedValue}
 						predictionCycle={this.predictionCycle.bind(this)}
 						entryPoint={this.state.entryPoint}
 						lastPoint={this.state.lastPoint}
@@ -235,11 +240,6 @@ export default class App extends React.Component{
 			})
 
 			// #bisect
-			self.state.bisectsAhead = []
-			for (let i = bisectDate(data, pointer); i < bisectDate(data, pointer) + 50; i++){
-				self.state.bisectsAhead.push(data[i])
-			}
-
 			self.setState({
 				selectedValue: self.state.selectedX,
 				entryPoint: bisectDate(data, pointer)

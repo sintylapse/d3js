@@ -27,7 +27,7 @@ export default class StatisticLog extends React.Component{
     }
 
     render(){
-        console.log(this.props.statiticStore);
+        // console.log(this.props.statiticStore);
         return(
             <div>
                 <div className="row">
