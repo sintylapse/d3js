@@ -5,22 +5,22 @@ class StatisticLogItem extends React.Component{
     constructor(props){
         super(props)
         this.state = {
-            mainWidth: 250,
+            removed: false,
+            mainWidth: 150,
             mainHeight: 50
+            // they are props ^
         }
     }
 
     componentDidMount(){
         const
-            data = this.props.predictionPath,
-            rangeMin = -250,
-            rangeMax = 1550
+            data = this.props.predictionPath
 
-		let mainScaleX = d3.scale.linear().domain([0, data[data.length - 1].date])
-		.range([rangeMin, rangeMax])
+		let mainScaleX = d3.scale.linear().domain([data[0].date, data[data.length - 1].date])
+		.range([0, this.state.mainWidth])
 		let mainScaleY = d3.scale.linear()
 		.domain([d3.min(data, (d) => d.value), d3.max(data, (d) => d.value)])
-		.range([250, 0])
+		.range([this.state.mainHeight, 0])
 
 		let chartValue = d3.svg.line()
 		.interpolate('monotone')
@@ -29,6 +29,14 @@ class StatisticLogItem extends React.Component{
 
         let ident = `#chart-log-${this.props.ident}`
 		d3.select(ident).transition().attr('d', chartValue(data))
+        console.log('MOUNT');
+    }
+
+    deleteLogItem(index){
+        this.setState({
+            removed: true
+        })
+        this.props.deleteFromStat(index)
     }
 
     render(){
@@ -37,12 +45,12 @@ class StatisticLogItem extends React.Component{
             data = this.props.predictionPath
 
         return(
-            <div className="row">
+            !this.state.removed && <div className="row">
                 <div className="col-3">Рандомный график</div>
                 <div className="col-2">{data[0].value}</div>
                 <div className="col-2">{data[data.length - 1].value}</div>
                 <div className="col-2">{resultView.message}, {resultView.value}</div>
-                <div className="col-3">
+                <div className="col-2">
                     <svg width={this.state.mainWidth} height={this.state.mainHeight}>
                         <path
                             stroke="mediumslateblue"
@@ -51,6 +59,9 @@ class StatisticLogItem extends React.Component{
                             id={`chart-log-${this.props.ident}`}>
                         </path>
                     </svg>
+                </div>
+                <div className="col-1">
+                    <button onClick={this.deleteLogItem.bind(this, this.props.ident)}>Delete</button>
                 </div>
             </div>
         )
@@ -67,7 +78,7 @@ export default class StatisticLog extends React.Component{
     }
 
     render(){
-        // console.log(this.props.statiticStore);
+
         return(
             <div>
                 <div className="row">
@@ -83,7 +94,8 @@ export default class StatisticLog extends React.Component{
                             key={i}
                             ident = {i}
                             resultView={item.resultView}
-                            predictionPath={item.predictionPath}/>
+                            predictionPath={item.predictionPath}
+                            deleteFromStat={this.props.deleteFromStat}/>
                     )
                 }
             </div>

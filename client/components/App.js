@@ -138,9 +138,15 @@ export default class App extends React.Component{
 		newObj.resultView = this.state.resultView
 		newData.push(newObj)
 		this.setState({
-			statiticStore: newData,
-			// predictionPath: [],
-			// resultView: {}
+			statiticStore: newData
+		})
+		localStorage.setItem('data', JSON.stringify(newData))
+	}
+
+	deleteFromStat(index){
+		let prevArray = this.state.statiticStore
+		let newData = prevArray.filter((item, i) => {
+			return i !== index
 		})
 		localStorage.setItem('data', JSON.stringify(newData))
 	}
@@ -189,7 +195,9 @@ export default class App extends React.Component{
 						<button onClick={this.mooveRight.bind(this, true)} className="btn">{'>'}</button>
 					</div>
 				</div>
-				<StatisticLog statiticStore={this.state.statiticStore}/>
+				<StatisticLog
+					statiticStore={this.state.statiticStore}
+					deleteFromStat={this.deleteFromStat.bind(this)}/>
 
 			</div>
 		)
