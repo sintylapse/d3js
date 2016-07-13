@@ -148,6 +148,9 @@ export default class App extends React.Component{
 		let newData = prevArray.filter((item, i) => {
 			return i !== index
 		})
+		this.setState({
+			statiticStore: newData
+		})
 		localStorage.setItem('data', JSON.stringify(newData))
 	}
 
