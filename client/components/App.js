@@ -1,10 +1,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import d3 from 'd3'
-import data from './data.js'
 
+import data from './data.js'
 import EditForm from './EditForm.js'
 import StatisticLog from './StatisticLog.js'
+
+import './style/main.styl'
 
 export default class App extends React.Component{
 
@@ -13,13 +15,13 @@ export default class App extends React.Component{
     	super(props);
 	    this.state = {
 	    	textColor: "red",
-			selectedValue: 0,
+			selectedValue: false,
 			rangeMin: -600,
 			rangeMax: 1550,
 			xPosition: 0,
 			selectedX: 0,
 			selectedY: 0,
-			mainWidth: 1000,
+			mainWidth: 0,
 		   	mainHeight: 250,
 			// lat 2 actually are not states ^^
 			predictionPath: [],
@@ -36,6 +38,8 @@ export default class App extends React.Component{
 
 	componentDidMount(){
 		this.d3ChartsRender()
+		window.addEventListener('resize', this.randFunc.bind(this));
+		this.randFunc()
 	}
 
 	mooveRight(right){
@@ -154,6 +158,12 @@ export default class App extends React.Component{
 		localStorage.setItem('data', JSON.stringify(newData))
 	}
 
+	randFunc(){
+		this.setState({
+			mainWidth: this.refs.svgTag.clientWidth
+		})
+	}
+
 	render(){
 
 		this.d3ChartsRender()
@@ -165,14 +175,14 @@ export default class App extends React.Component{
 					{
 						this.state.selectedValue &&
 						<EditForm selectedValue={this.state.selectedValue}
-						predictionCycle={this.predictionCycle.bind(this)}
-						entryPoint={this.state.entryPoint}
-						lastPoint={this.state.lastPoint}
-						resultView={this.state.resultView}
-						predictionEnd={this.predictionEnd.bind(this)}
-						predictionInitialized={this.state.predictionInitialized}/>
+							predictionCycle={this.predictionCycle.bind(this)}
+							entryPoint={this.state.entryPoint}
+							lastPoint={this.state.lastPoint}
+							resultView={this.state.resultView}
+							predictionEnd={this.predictionEnd.bind(this)}
+							predictionInitialized={this.state.predictionInitialized}/>
 					}
-					<svg width={this.state.mainWidth} height={this.state.mainHeight}>
+					<svg width="100%" ref="svgTag" height={this.state.mainHeight} onClick={this.randFunc.bind(this)}>
 						<g className="global-group">
 							<g className="prediction-group">
 								<circle className="prediction-circle" strokeWidth="2" stroke="green" fill="none" r="4"></circle>
@@ -198,9 +208,12 @@ export default class App extends React.Component{
 						<button onClick={this.mooveRight.bind(this, true)} className="btn">{'>'}</button>
 					</div>
 				</div>
-				<StatisticLog
-					statiticStore={this.state.statiticStore}
-					deleteFromStat={this.deleteFromStat.bind(this)}/>
+				{
+					this.state.statiticStore.length > 0 &&
+					<StatisticLog
+						statiticStore={this.state.statiticStore}
+						deleteFromStat={this.deleteFromStat.bind(this)}/>
+				}
 
 			</div>
 		)
