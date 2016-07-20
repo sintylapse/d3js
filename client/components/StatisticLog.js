@@ -1,6 +1,8 @@
 import React from 'react'
 import d3 from 'd3'
 
+import d3LogChartsRender from '../d3Functions/d3LogChartsRender.js'
+
 class StatisticLogItem extends React.Component{
     constructor(props){
         super(props)
@@ -12,7 +14,7 @@ class StatisticLogItem extends React.Component{
     }
 
     componentDidMount(){
-        this.d3LogChartsRender()
+        d3LogChartsRender(this.props.predictionPath, this.state, this.props.logItemId)
     }
 
     deleteLogItem(index){
@@ -20,7 +22,7 @@ class StatisticLogItem extends React.Component{
     }
 
     render(){
-        this.d3LogChartsRender()
+        d3LogChartsRender(this.props.predictionPath, this.state, this.props.logItemId)
 
         const
             resultView = this.props.resultView,
@@ -38,34 +40,15 @@ class StatisticLogItem extends React.Component{
                             stroke="mediumslateblue"
                             strokeWidth="1" fill="none"
                             className="log-path"
-                            id={`chart-log-${this.props.ident}`}>
+                            id={`chart-log-${this.props.logItemId}`}>
                         </path>
                     </svg>
                 </div>
                 <div className="col-1">
-                    <button onClick={this.deleteLogItem.bind(this, this.props.ident)}>Delete</button>
+                    <button onClick={this.deleteLogItem.bind(this, this.props.logItemId)}>Delete</button>
                 </div>
             </div>
         )
-    }
-
-    d3LogChartsRender(){
-        const
-            data = this.props.predictionPath
-
-		let mainScaleX = d3.scale.linear().domain([data[0].date, data[data.length - 1].date])
-		.range([0, this.state.mainWidth])
-		let mainScaleY = d3.scale.linear()
-		.domain([d3.min(data, (d) => d.value), d3.max(data, (d) => d.value)])
-		.range([this.state.mainHeight, 0])
-
-		let chartValue = d3.svg.line()
-		.interpolate('monotone')
-		.x(data => mainScaleX(data.date))
-		.y(data => mainScaleY(data.value))
-
-        let ident = `#chart-log-${this.props.ident}`
-		d3.select(ident).attr('d', chartValue(data))
     }
 }
 
@@ -86,7 +69,7 @@ export default class StatisticLog extends React.Component{
                     this.props.statiticStore.map((item, i) =>
                         <StatisticLogItem
                             key={i}
-                            ident = {i}
+                            logItemId = {i}
                             resultView={item.resultView}
                             predictionPath={item.predictionPath}
                             deleteFromStat={this.props.deleteFromStat}/>

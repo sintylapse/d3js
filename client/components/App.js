@@ -2,19 +2,18 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import d3 from 'd3'
 
-import data from './data.js'
+import d3MainChartRender from '../d3Functions/d3MainChartRender.js'
+import data from '../data.js'
 import EditForm from './EditForm.js'
 import StatisticLog from './StatisticLog.js'
 
-import './style/main.styl'
+import '../style/main.styl'
 
 export default class App extends React.Component{
-
 
 	constructor(props) {
     	super(props);
 	    this.state = {
-	    	textColor: "red",
 			selectedValue: false,
 			rangeMin: -600,
 			rangeMax: 1550,
@@ -37,9 +36,9 @@ export default class App extends React.Component{
 	}
 
 	componentDidMount(){
-		this.d3ChartsRender()
-		window.addEventListener('resize', this.randFunc.bind(this));
-		this.randFunc()
+		d3MainChartRender(data, this.state, this)
+		window.addEventListener('resize', this.svgResize.bind(this));
+		this.svgResize()
 	}
 
 	mooveRight(right){
@@ -158,15 +157,14 @@ export default class App extends React.Component{
 		localStorage.setItem('data', JSON.stringify(newData))
 	}
 
-	randFunc(){
+	svgResize(){
 		this.setState({
-			mainWidth: this.refs.svgTag.clientWidth
+			mainWidth: this.refs.svgResize.clientWidth
 		})
 	}
 
 	render(){
-
-		this.d3ChartsRender()
+		d3MainChartRender(data, this.state, this)
 
 		return(
 			<div className="container">
@@ -182,23 +180,23 @@ export default class App extends React.Component{
 							predictionEnd={this.predictionEnd.bind(this)}
 							predictionInitialized={this.state.predictionInitialized}/>
 					}
-					<svg width="100%" ref="svgTag" height={this.state.mainHeight} onClick={this.randFunc.bind(this)}>
-						<g className="global-group">
-							<g className="prediction-group">
-								<circle className="prediction-circle" strokeWidth="2" stroke="green" fill="none" r="4"></circle>
-								<path className="prediction-path" strokeWidth="2" stroke="green" fill="none"></path>
+					<svg width="100%" ref="svgResize" height={this.state.mainHeight}>
+						<g id="global-group">
+							<g id="prediction-group">
+								<circle id="prediction-circle" strokeWidth="2" stroke="green" fill="none" r="4"></circle>
+								<path id="prediction-path" strokeWidth="2" stroke="green" fill="none"></path>
 							</g>
 
-							<g className="main-path-group" pointerEvents="all" transform="translate(0, 0)">
+							<g id="main-path-group" pointerEvents="all" transform="translate(0, 0)">
 								<path
 									stroke="mediumslateblue"
 									strokeWidth="1" fill="none"
-									className="main-path">
+									id="main-path">
 								</path>
 							</g>
 						</g>
-						<g className="xAxis" transform="translate(0, -20)" fill="none"></g>
-						<g className="yAxis" transform={`translate(${this.state.mainWidth - 50}, 0)`} fill="none"></g>
+						<g id="xAxis" transform="translate(0, -20)" fill="none"></g>
+						<g id="yAxis" transform={`translate(${this.state.mainWidth - 50}, 0)`} fill="none"></g>
 
 					</svg>
 					<div>
@@ -219,63 +217,6 @@ export default class App extends React.Component{
 		)
 	}
 
-	d3ChartsRender(){
-		let mainScaleX = d3.scale.linear().domain([0, data[data.length - 1].date])
-		.range([this.state.rangeMin, this.state.rangeMax])
-
-		let mainScaleY = d3.scale.linear()
-		.domain([d3.min(data, (d) => d.value), d3.max(data, (d) => d.value)])
-		.range([250, 0])
-
-
-
-		let xAxisSize = d3.svg.axis().scale(mainScaleX).tickSize(this.state.mainHeight)
-		let yAxisSize = d3.svg.axis().scale(mainScaleY).ticks(10).orient("right")
-
-		let chartValue = d3.svg.line()
-		.interpolate('monotone')
-		.x(data => mainScaleX(data.date))
-		.y(data => mainScaleY(data.value))
-
-		d3.selectAll('.xAxis').transition().attr('transform', `translate(${this.state.xPosition}, -20)`).call(xAxisSize)
-		d3.selectAll('.yAxis').call(yAxisSize)
-
-		// moove chart
-		d3.selectAll('.global-group').transition().attr('transform', `translate(${this.state.xPosition}, 0)`)
-
-		// zoom chart
-		d3.selectAll('.main-path').transition().attr('d', chartValue(data))
-
-		const self = this
-
-
-		let bisectDate = d3.bisector(data => data.date).right
-
-		d3.selectAll('.main-path-group').on('click', function(){
-			let pointer = mainScaleX.invert(d3.mouse(this)[0])
-
-			self.setState({
-				selectedX: data[bisectDate(data, pointer)].date,
-				selectedY: data[bisectDate(data, pointer)].value
-			})
-
-			// #bisect
-			self.setState({
-				selectedValue: self.state.selectedX,
-				entryPoint: bisectDate(data, pointer)
-			})
-		})
-
-		if (this.state.predictionInitialized) {
-			d3.selectAll('.main-path-group').on('click', null)
-		}
-
-		d3.selectAll('.prediction-circle').transition().attr({
-			transform: `translate(${mainScaleX(this.state.selectedX)}, ${mainScaleY(this.state.selectedY)})`,
-		})
-
-		d3.selectAll('.prediction-path').transition().attr({d: chartValue(this.state.predictionPath)})
-	}
 }
 
 ReactDOM.render(
