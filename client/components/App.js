@@ -139,7 +139,7 @@ export default class App extends React.Component{
 
 		newObj.predictionPath = this.state.predictionPath
 		newObj.resultView = this.state.resultView
-		newData.push(newObj)
+		newData.unshift(newObj)
 		this.setState({
 			statiticStore: newData
 		})
@@ -169,41 +169,45 @@ export default class App extends React.Component{
 		return(
 			<div className="container">
 				{this.state.predictionInitialized && <i className="icon-spin4 main-spinner"></i>}
-				<div className="d3Render">
-					{
-						this.state.selectedValue &&
-						<EditForm selectedValue={this.state.selectedValue}
-							predictionCycle={this.predictionCycle.bind(this)}
-							entryPoint={this.state.entryPoint}
-							lastPoint={this.state.lastPoint}
-							resultView={this.state.resultView}
-							predictionEnd={this.predictionEnd.bind(this)}
-							predictionInitialized={this.state.predictionInitialized}/>
-					}
-					<svg width="100%" ref="svgResize" height={this.state.mainHeight}>
-						<g id="global-group">
-							<g id="prediction-group">
-								<circle id="prediction-circle" strokeWidth="2" stroke="green" fill="none" r="4"></circle>
-								<path id="prediction-path" strokeWidth="2" stroke="green" fill="none"></path>
-							</g>
+				<div id="main-screen">
+					<div className="row">
+						<div className="col-9 svg-col">
+							<svg width="100%" ref="svgResize" height={this.state.mainHeight}>
+								<g id="global-group">
+									<g id="prediction-group">
+										<circle id="prediction-circle" strokeWidth="2" stroke="green" fill="none" r="4"></circle>
+										<path id="prediction-path" strokeWidth="2" stroke="green" fill="none"></path>
+									</g>
 
-							<g id="main-path-group" pointerEvents="all" transform="translate(0, 0)">
-								<path
-									stroke="mediumslateblue"
-									strokeWidth="1" fill="none"
-									id="main-path">
-								</path>
-							</g>
-						</g>
-						<g id="xAxis" transform="translate(0, -20)" fill="none"></g>
-						<g id="yAxis" transform={`translate(${this.state.mainWidth - 50}, 0)`} fill="none"></g>
+									<g id="main-path-group" pointerEvents="all" transform="translate(0, 0)">
+										<path
+											stroke="mediumslateblue"
+											strokeWidth="1" fill="none"
+											id="main-path">
+										</path>
+									</g>
+								</g>
+								<g id="xAxis" transform="translate(0, -20)" fill="none"></g>
+								<g id="yAxis" transform={`translate(${this.state.mainWidth - 50}, 0)`} fill="none"></g>
 
-					</svg>
-					<div>
-						<button onClick={this.zoomChart.bind(this, false)} className="btn">{'-'}</button>
-						<button onClick={this.zoomChart.bind(this, true)} className="btn">{'+'}</button>
-						<button onClick={this.mooveRight.bind(this, false)} className="btn">{'<'}</button>
-						<button onClick={this.mooveRight.bind(this, true)} className="btn">{'>'}</button>
+							</svg>
+							<div className="chart-handlers">
+								<button onClick={this.zoomChart.bind(this, false)} className="btn">{'-'}</button>
+								<button onClick={this.zoomChart.bind(this, true)} className="btn">{'+'}</button>
+								<button onClick={this.mooveRight.bind(this, false)} className="btn">{'<'}</button>
+								<button onClick={this.mooveRight.bind(this, true)} className="btn">{'>'}</button>
+							</div>
+						</div>
+						<div className="col-3 control-panel-col">
+							<EditForm selectedValue={this.state.selectedValue}
+								predictionCycle={this.predictionCycle.bind(this)}
+								entryPoint={this.state.entryPoint}
+								lastPoint={this.state.lastPoint}
+								resultView={this.state.resultView}
+								predictionEnd={this.predictionEnd.bind(this)}
+								predictionInitialized={this.state.predictionInitialized}
+								mainHeight={this.state.mainHeight}/>
+						</div>
 					</div>
 				</div>
 				{

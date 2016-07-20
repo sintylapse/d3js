@@ -29,7 +29,7 @@ class StatisticLogItem extends React.Component{
             data = this.props.predictionPath
 
         return(
-            <div className="row">
+            <div className="row statistic-log-item">
                 <div className="col-3">Рандомный график</div>
                 <div className="col-2">{data[0].value}</div>
                 <div className="col-2">{data[data.length - 1].value}</div>
@@ -57,24 +57,28 @@ export default class StatisticLog extends React.Component{
     render(){
 
         return(
-            <div>
-                <div className="row">
-                    <div className="col-3">Название графика</div>
-                    <div className="col-2">Точка входа</div>
-                    <div className="col-2">Точка выхода</div>
-                    <div className="col-2">Результат</div>
-                    <div className="col-3">Снимок графика</div>
+            <div id="statistic-log" className="simple-table">
+                <div className="table-header">
+                    <div className="row">
+                        <div className="col-3">Название графика</div>
+                        <div className="col-2">Точка входа</div>
+                        <div className="col-2">Точка выхода</div>
+                        <div className="col-2">Результат</div>
+                        <div className="col-3">Снимок графика</div>
+                    </div>
                 </div>
-                {
-                    this.props.statiticStore.map((item, i) =>
-                        <StatisticLogItem
+                <div className="table-body">
+                    {
+                        this.props.statiticStore.map((item, i) =>
+                            <StatisticLogItem
                             key={i}
                             logItemId = {i}
                             resultView={item.resultView}
                             predictionPath={item.predictionPath}
                             deleteFromStat={this.props.deleteFromStat}/>
-                    )
-                }
+                        )
+                    }
+                </div>
             </div>
         )
     }
