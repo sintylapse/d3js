@@ -69,15 +69,15 @@ export default class StatisticLog extends React.Component{
                     </div>
                 </div>
                 <div className="table-body">
-                    <ReactCSSTransitionGroup transitionName="log" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
+                    <ReactCSSTransitionGroup transitionName="log-item" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
                     {
                         this.props.statiticStore.map((item, i) =>
                             <StatisticLogItem
-                            key={item.uniqueId}
-                            logItemId = {item.uniqueId}
-                            resultView={item.resultView}
-                            predictionPath={item.predictionPath}
-                            deleteFromStat={this.props.deleteFromStat}/>
+                                key={item.uniqueId}
+                                logItemId = {item.uniqueId}
+                                resultView={item.resultView}
+                                predictionPath={item.predictionPath}
+                                deleteFromStat={this.props.deleteFromStat}/>
                         )
                     }
                     </ReactCSSTransitionGroup>

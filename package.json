@@ -14,8 +14,7 @@
     "random-token": "0.0.8",
     "react": "^15.0.2",
     "react-addons-css-transition-group": "^15.2.1",
-    "react-dom": "^15.0.2",
-    "react-transition-group-plus": "^0.3.1"
+    "react-dom": "^15.0.2"
   },
   "devDependencies": {
     "autoprefixer-loader": "^3.2.0",

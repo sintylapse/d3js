@@ -23,7 +23,6 @@ export default class App extends React.Component{
 			selectedY: 0,
 			mainWidth: 0,
 		   	mainHeight: 250,
-			// lat 2 actually are not states ^^
 			predictionPath: [],
 			entryPoint: 0,
 			lastPoint: 0,
@@ -167,7 +166,7 @@ export default class App extends React.Component{
 
 	render(){
 		d3MainChartRender(data, this.state, this)
-		
+
 		return(
 			<div className="container">
 				{this.state.predictionInitialized && <i className="icon-spin4 main-spinner"></i>}
@@ -213,8 +212,7 @@ export default class App extends React.Component{
 					</div>
 				</div>
 				{
-					this.state.statiticStore.length > 0 &&
-					<StatisticLog
+					this.state.statiticStore.length > 0 && <StatisticLog
 						statiticStore={this.state.statiticStore}
 						deleteFromStat={this.deleteFromStat.bind(this)}/>
 				}

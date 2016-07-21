@@ -1,0 +1,45 @@
+.log-item-enter {
+	trans()
+    opacity: 0
+	height 0px
+}
+
+.log-item-enter.log-item-enter-active {
+    opacity: 1;
+	height $logItemHeight
+}
+
+.log-item-leave {
+	trans()
+    opacity: 1;
+}
+
+.log-item-leave.log-item-leave-active {
+    opacity: 0;
+	height 0px
+}
+
+.field-opacity-enter {
+	trans()
+    opacity: 0
+	 -webkit-transform: translate3d(0, -50%, 0);
+    transform: translate3d(0, -50%, 0);
+}
+.field-opacity-enter.field-opacity-enter-active {
+    opacity: 1;
+	 -webkit-transform: none;
+    transform: none;
+}
+
+.field-opacity-leave {
+	trans()
+    opacity: 1;
+	 -webkit-transform: none;
+    transform: none;
+}
+
+.field-opacity-leave.field-opacity-leave-active {
+    opacity: 0;
+	 -webkit-transform: translate3d(0, 50%, 0);
+    transform: translate3d(0, 50%, 0);
+}

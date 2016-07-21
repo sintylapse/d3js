@@ -1,7 +1,8 @@
-@import './_fonts.styl'
-@import "./_mixins.styl"
-@import './_frame.styl'
-@import "./_animation.styl"
+@import './fonts.styl'
+@import "./mixins.styl"
+@import './frame.styl'
+@import "./animation.styl"
+@import './transitionGropuAnimations.styl'
 
 $color-1= mediumslateblue
 $gray= #dadada
@@ -52,6 +53,7 @@ button
 	cfix()
 	position: relative
 
+
 #control-panel
 	display flex
 	position absolute
@@ -65,12 +67,16 @@ button
 		color $color-1
 	.reject
 		color red
-	.result-view
-		trans()
-		&.win
+	.result-wrap
+		position relative
+		display block
+		.win
 			color: $color-1
-		&.lose
+		.lose
 			color: red
+	.result-inner
+		position absolute
+		left 0; top 0
 	.inner
 		margin auto
 
@@ -95,31 +101,3 @@ $logItemHeight= 70px
 		.row
 			margin-bottom 10px
 			border-bottom 1px solid $gray
-
-
-.log-enter {
-	trans()
-    opacity: 0
-	height 0px
-	padding-bottom 0px
-	margin-bottom 0px
-}
-
-.log-enter.log-enter-active {
-    opacity: 1;
-	height $logItemHeight
-	padding-bottom 10px
-	margin-bottom 10px
-}
-
-.log-leave {
-	trans()
-    opacity: 1;
-}
-
-.log-leave.log-leave-active {
-    opacity: 0;
-	height 0px
-	padding 0
-	margin 0
-}
