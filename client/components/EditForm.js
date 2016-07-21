@@ -23,8 +23,7 @@ export default class EditForm extends React.Component{
 		return(
 			<div id='control-panel' style={{'height': this.props.mainHeight}}>
 				{
-					this.props.selectedValue ?
-					<div className="inner">
+					this.props.selectedValue ? <div className="inner">
 						<div>
 							Выбранное значение:
 							<span className="selectedPosition">{this.props.selectedValue}</span>
@@ -52,10 +51,10 @@ export default class EditForm extends React.Component{
 						{
 							this.props.resultView.message && this.renderMessage()
 						}
+					</div> : <div className="inner">
+						<p>Выберите начальную точку входа</p>
 					</div>
-					: <div className="inner"><p>Выберите начальную точку входа</p></div>
 				}
-
 			</div>
 		)
 	}

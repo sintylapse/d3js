@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import d3 from 'd3'
+import randomToken from 'random-token'
 
 import d3MainChartRender from '../d3Functions/d3MainChartRender.js'
 import data from '../data.js'
@@ -137,6 +138,7 @@ export default class App extends React.Component{
 			newData = this.state.statiticStore,
 			newObj = {}
 
+		newObj.uniqueId = randomToken(8)
 		newObj.predictionPath = this.state.predictionPath
 		newObj.resultView = this.state.resultView
 		newData.unshift(newObj)
@@ -149,7 +151,7 @@ export default class App extends React.Component{
 	deleteFromStat(index){
 		let prevArray = this.state.statiticStore
 		let newData = prevArray.filter((item, i) => {
-			return i !== index
+			return item.uniqueId !== index
 		})
 		this.setState({
 			statiticStore: newData
@@ -165,7 +167,7 @@ export default class App extends React.Component{
 
 	render(){
 		d3MainChartRender(data, this.state, this)
-
+		
 		return(
 			<div className="container">
 				{this.state.predictionInitialized && <i className="icon-spin4 main-spinner"></i>}

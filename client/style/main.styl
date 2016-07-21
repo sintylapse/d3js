@@ -82,12 +82,44 @@ button
 #statistic-log
 	margin-top 20px
 
+$logItemHeight= 70px
+.statistic-log-item
+	height $logItemHeight
+	overflow: hidden
+
 .simple-table
 	.table-header
 		.row
 			margin-bottom 20px
 	.table-body
 		.row
-			padding-bottom 10px
 			margin-bottom 10px
 			border-bottom 1px solid $gray
+
+
+.log-enter {
+	trans()
+    opacity: 0
+	height 0px
+	padding-bottom 0px
+	margin-bottom 0px
+}
+
+.log-enter.log-enter-active {
+    opacity: 1;
+	height $logItemHeight
+	padding-bottom 10px
+	margin-bottom 10px
+}
+
+.log-leave {
+	trans()
+    opacity: 1;
+}
+
+.log-leave.log-leave-active {
+    opacity: 0;
+	height 0px
+	padding 0
+	margin 0
+}

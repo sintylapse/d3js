@@ -1,5 +1,6 @@
 import React from 'react'
 import d3 from 'd3'
+import ReactCSSTransitionGroup   from 'react-addons-css-transition-group'
 
 import d3LogChartsRender from '../d3Functions/d3LogChartsRender.js'
 
@@ -68,16 +69,18 @@ export default class StatisticLog extends React.Component{
                     </div>
                 </div>
                 <div className="table-body">
+                    <ReactCSSTransitionGroup transitionName="log" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
                     {
                         this.props.statiticStore.map((item, i) =>
                             <StatisticLogItem
-                            key={i}
-                            logItemId = {i}
+                            key={item.uniqueId}
+                            logItemId = {item.uniqueId}
                             resultView={item.resultView}
                             predictionPath={item.predictionPath}
                             deleteFromStat={this.props.deleteFromStat}/>
                         )
                     }
+                    </ReactCSSTransitionGroup>
                 </div>
             </div>
         )
